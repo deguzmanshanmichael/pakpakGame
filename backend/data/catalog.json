@@ -1,0 +1,2850 @@
+{
+  "version": 1,
+  "rarities": [
+    {
+      "key": "common",
+      "label": "Common",
+      "count": 50,
+      "color": "#9aa5b1"
+    },
+    {
+      "key": "uncommon",
+      "label": "Uncommon",
+      "count": 30,
+      "color": "#5fcf62"
+    },
+    {
+      "key": "elite",
+      "label": "Elite",
+      "count": 20,
+      "color": "#3fa7f0"
+    },
+    {
+      "key": "rare",
+      "label": "Rare",
+      "count": 15,
+      "color": "#b06cf2"
+    },
+    {
+      "key": "ultra",
+      "label": "Ultra",
+      "count": 10,
+      "color": "#f25c9b"
+    },
+    {
+      "key": "legendary",
+      "label": "Legendary",
+      "count": 5,
+      "color": "#ffb52e"
+    },
+    {
+      "key": "celestial",
+      "label": "Celestial",
+      "count": 3,
+      "color": "#7df9ff"
+    }
+  ],
+  "items": [
+    {
+      "id": "PK001",
+      "name": "Mango Feather",
+      "rarity": "common",
+      "shape": "feather",
+      "palette": [
+        "#5a3a06",
+        "#ffc93c",
+        "#e89a1c",
+        "#fff2a8"
+      ],
+      "pattern": "plain",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK002",
+      "name": "Ube Gem",
+      "rarity": "common",
+      "shape": "gem",
+      "palette": [
+        "#2b1340",
+        "#8e5cc9",
+        "#6a3d9e",
+        "#d7b8ff"
+      ],
+      "pattern": "plain",
+      "description": "Cut by wind, polished by rain. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK003",
+      "name": "Kalamansi Star",
+      "rarity": "common",
+      "shape": "star",
+      "palette": [
+        "#1f3b06",
+        "#8fd43a",
+        "#5fa31f",
+        "#e2ffb0"
+      ],
+      "pattern": "plain",
+      "description": "A tiny star that fell asleep in the clouds. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK004",
+      "name": "Buko Orb",
+      "rarity": "common",
+      "shape": "orb",
+      "palette": [
+        "#2c3a21",
+        "#f4f1de",
+        "#9cc276",
+        "#ffffff"
+      ],
+      "pattern": "plain",
+      "description": "Swirls when you shake it. Wag masyado. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK005",
+      "name": "Gulaman Shell",
+      "rarity": "common",
+      "shape": "shell",
+      "palette": [
+        "#4a1030",
+        "#ff8fc2",
+        "#e0609c",
+        "#ffd6ea"
+      ],
+      "pattern": "plain",
+      "description": "You can hear the sea inside. Or is that wifi? Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK006",
+      "name": "Tsokolate Leaf",
+      "rarity": "common",
+      "shape": "leaf",
+      "palette": [
+        "#2a140a",
+        "#8b5a3c",
+        "#643c24",
+        "#c9926a"
+      ],
+      "pattern": "plain",
+      "description": "Picked from the tallest bamboo in the bukid. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK007",
+      "name": "Dagat Mask",
+      "rarity": "common",
+      "shape": "mask",
+      "palette": [
+        "#0b2546",
+        "#2f7fd6",
+        "#1f5aa3",
+        "#9fd3ff"
+      ],
+      "pattern": "plain",
+      "description": "Worn during the great Pakpak festival. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK008",
+      "name": "Pandan Crown",
+      "rarity": "common",
+      "shape": "crown",
+      "palette": [
+        "#0f3320",
+        "#3fbf7f",
+        "#2a8a59",
+        "#b3f5d0"
+      ],
+      "pattern": "plain",
+      "description": "Fit for the king of the sky (or a very proud maya). Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK009",
+      "name": "Langit Key",
+      "rarity": "common",
+      "shape": "key",
+      "palette": [
+        "#16384d",
+        "#7fd1ff",
+        "#4aa6dc",
+        "#e0f6ff"
+      ],
+      "pattern": "plain",
+      "description": "Opens something. Nobody knows what. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK010",
+      "name": "Kape Fish",
+      "rarity": "common",
+      "shape": "fish",
+      "palette": [
+        "#21160e",
+        "#b07b4f",
+        "#7e5333",
+        "#e3bf97"
+      ],
+      "pattern": "plain",
+      "description": "Lumipad daw ito. Seryoso. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK011",
+      "name": "Mango Leaf",
+      "rarity": "common",
+      "shape": "leaf",
+      "palette": [
+        "#5a3a06",
+        "#ffc93c",
+        "#e89a1c",
+        "#fff2a8"
+      ],
+      "pattern": "plain",
+      "description": "Picked from the tallest bamboo in the bukid. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK012",
+      "name": "Ube Mask",
+      "rarity": "common",
+      "shape": "mask",
+      "palette": [
+        "#2b1340",
+        "#8e5cc9",
+        "#6a3d9e",
+        "#d7b8ff"
+      ],
+      "pattern": "plain",
+      "description": "Worn during the great Pakpak festival. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK013",
+      "name": "Kalamansi Crown",
+      "rarity": "common",
+      "shape": "crown",
+      "palette": [
+        "#1f3b06",
+        "#8fd43a",
+        "#5fa31f",
+        "#e2ffb0"
+      ],
+      "pattern": "plain",
+      "description": "Fit for the king of the sky (or a very proud maya). Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK014",
+      "name": "Buko Key",
+      "rarity": "common",
+      "shape": "key",
+      "palette": [
+        "#2c3a21",
+        "#f4f1de",
+        "#9cc276",
+        "#ffffff"
+      ],
+      "pattern": "plain",
+      "description": "Opens something. Nobody knows what. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK015",
+      "name": "Gulaman Fish",
+      "rarity": "common",
+      "shape": "fish",
+      "palette": [
+        "#4a1030",
+        "#ff8fc2",
+        "#e0609c",
+        "#ffd6ea"
+      ],
+      "pattern": "plain",
+      "description": "Lumipad daw ito. Seryoso. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK016",
+      "name": "Tsokolate Kabute",
+      "rarity": "common",
+      "shape": "mushroom",
+      "palette": [
+        "#2a140a",
+        "#8b5a3c",
+        "#643c24",
+        "#c9926a"
+      ],
+      "pattern": "plain",
+      "description": "Do not eat. Pang-collection lang. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK017",
+      "name": "Dagat Potion",
+      "rarity": "common",
+      "shape": "potion",
+      "palette": [
+        "#0b2546",
+        "#2f7fd6",
+        "#1f5aa3",
+        "#9fd3ff"
+      ],
+      "pattern": "plain",
+      "description": "Smells like kalamansi and courage. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK018",
+      "name": "Pandan Bell",
+      "rarity": "common",
+      "shape": "bell",
+      "palette": [
+        "#0f3320",
+        "#3fbf7f",
+        "#2a8a59",
+        "#b3f5d0"
+      ],
+      "pattern": "plain",
+      "description": "Rings once for every perfect flap. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK019",
+      "name": "Langit Ring",
+      "rarity": "common",
+      "shape": "ring",
+      "palette": [
+        "#16384d",
+        "#7fd1ff",
+        "#4aa6dc",
+        "#e0f6ff"
+      ],
+      "pattern": "plain",
+      "description": "A loop of pure determination. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK020",
+      "name": "Kape Shard",
+      "rarity": "common",
+      "shape": "shard",
+      "palette": [
+        "#21160e",
+        "#b07b4f",
+        "#7e5333",
+        "#e3bf97"
+      ],
+      "pattern": "plain",
+      "description": "Broken piece of a storm cloud. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK021",
+      "name": "Mango Kabute",
+      "rarity": "common",
+      "shape": "mushroom",
+      "palette": [
+        "#5a3a06",
+        "#ffc93c",
+        "#e89a1c",
+        "#fff2a8"
+      ],
+      "pattern": "plain",
+      "description": "Do not eat. Pang-collection lang. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK022",
+      "name": "Ube Potion",
+      "rarity": "common",
+      "shape": "potion",
+      "palette": [
+        "#2b1340",
+        "#8e5cc9",
+        "#6a3d9e",
+        "#d7b8ff"
+      ],
+      "pattern": "plain",
+      "description": "Smells like kalamansi and courage. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK023",
+      "name": "Kalamansi Bell",
+      "rarity": "common",
+      "shape": "bell",
+      "palette": [
+        "#1f3b06",
+        "#8fd43a",
+        "#5fa31f",
+        "#e2ffb0"
+      ],
+      "pattern": "plain",
+      "description": "Rings once for every perfect flap. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK024",
+      "name": "Buko Ring",
+      "rarity": "common",
+      "shape": "ring",
+      "palette": [
+        "#2c3a21",
+        "#f4f1de",
+        "#9cc276",
+        "#ffffff"
+      ],
+      "pattern": "plain",
+      "description": "A loop of pure determination. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK025",
+      "name": "Gulaman Shard",
+      "rarity": "common",
+      "shape": "shard",
+      "palette": [
+        "#4a1030",
+        "#ff8fc2",
+        "#e0609c",
+        "#ffd6ea"
+      ],
+      "pattern": "plain",
+      "description": "Broken piece of a storm cloud. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK026",
+      "name": "Tsokolate Egg",
+      "rarity": "common",
+      "shape": "egg",
+      "palette": [
+        "#2a140a",
+        "#8b5a3c",
+        "#643c24",
+        "#c9926a"
+      ],
+      "pattern": "plain",
+      "description": "Something is moving inside... Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK027",
+      "name": "Dagat Bloom",
+      "rarity": "common",
+      "shape": "flower",
+      "palette": [
+        "#0b2546",
+        "#2f7fd6",
+        "#1f5aa3",
+        "#9fd3ff"
+      ],
+      "pattern": "plain",
+      "description": "Blooms only above the clouds. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK028",
+      "name": "Pandan Heart",
+      "rarity": "common",
+      "shape": "heart",
+      "palette": [
+        "#0f3320",
+        "#3fbf7f",
+        "#2a8a59",
+        "#b3f5d0"
+      ],
+      "pattern": "plain",
+      "description": "For every bird who never gave up. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK029",
+      "name": "Langit Feather",
+      "rarity": "common",
+      "shape": "feather",
+      "palette": [
+        "#16384d",
+        "#7fd1ff",
+        "#4aa6dc",
+        "#e0f6ff"
+      ],
+      "pattern": "plain",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK030",
+      "name": "Kape Gem",
+      "rarity": "common",
+      "shape": "gem",
+      "palette": [
+        "#21160e",
+        "#b07b4f",
+        "#7e5333",
+        "#e3bf97"
+      ],
+      "pattern": "plain",
+      "description": "Cut by wind, polished by rain. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK031",
+      "name": "Mango Egg",
+      "rarity": "common",
+      "shape": "egg",
+      "palette": [
+        "#5a3a06",
+        "#ffc93c",
+        "#e89a1c",
+        "#fff2a8"
+      ],
+      "pattern": "plain",
+      "description": "Something is moving inside... Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK032",
+      "name": "Ube Bloom",
+      "rarity": "common",
+      "shape": "flower",
+      "palette": [
+        "#2b1340",
+        "#8e5cc9",
+        "#6a3d9e",
+        "#d7b8ff"
+      ],
+      "pattern": "plain",
+      "description": "Blooms only above the clouds. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK033",
+      "name": "Kalamansi Heart",
+      "rarity": "common",
+      "shape": "heart",
+      "palette": [
+        "#1f3b06",
+        "#8fd43a",
+        "#5fa31f",
+        "#e2ffb0"
+      ],
+      "pattern": "plain",
+      "description": "For every bird who never gave up. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK034",
+      "name": "Buko Feather",
+      "rarity": "common",
+      "shape": "feather",
+      "palette": [
+        "#2c3a21",
+        "#f4f1de",
+        "#9cc276",
+        "#ffffff"
+      ],
+      "pattern": "plain",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK035",
+      "name": "Gulaman Gem",
+      "rarity": "common",
+      "shape": "gem",
+      "palette": [
+        "#4a1030",
+        "#ff8fc2",
+        "#e0609c",
+        "#ffd6ea"
+      ],
+      "pattern": "plain",
+      "description": "Cut by wind, polished by rain. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK036",
+      "name": "Tsokolate Star",
+      "rarity": "common",
+      "shape": "star",
+      "palette": [
+        "#2a140a",
+        "#8b5a3c",
+        "#643c24",
+        "#c9926a"
+      ],
+      "pattern": "plain",
+      "description": "A tiny star that fell asleep in the clouds. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK037",
+      "name": "Dagat Orb",
+      "rarity": "common",
+      "shape": "orb",
+      "palette": [
+        "#0b2546",
+        "#2f7fd6",
+        "#1f5aa3",
+        "#9fd3ff"
+      ],
+      "pattern": "plain",
+      "description": "Swirls when you shake it. Wag masyado. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK038",
+      "name": "Pandan Shell",
+      "rarity": "common",
+      "shape": "shell",
+      "palette": [
+        "#0f3320",
+        "#3fbf7f",
+        "#2a8a59",
+        "#b3f5d0"
+      ],
+      "pattern": "plain",
+      "description": "You can hear the sea inside. Or is that wifi? Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK039",
+      "name": "Langit Leaf",
+      "rarity": "common",
+      "shape": "leaf",
+      "palette": [
+        "#16384d",
+        "#7fd1ff",
+        "#4aa6dc",
+        "#e0f6ff"
+      ],
+      "pattern": "plain",
+      "description": "Picked from the tallest bamboo in the bukid. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK040",
+      "name": "Kape Mask",
+      "rarity": "common",
+      "shape": "mask",
+      "palette": [
+        "#21160e",
+        "#b07b4f",
+        "#7e5333",
+        "#e3bf97"
+      ],
+      "pattern": "plain",
+      "description": "Worn during the great Pakpak festival. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK041",
+      "name": "Mango Star",
+      "rarity": "common",
+      "shape": "star",
+      "palette": [
+        "#5a3a06",
+        "#ffc93c",
+        "#e89a1c",
+        "#fff2a8"
+      ],
+      "pattern": "plain",
+      "description": "A tiny star that fell asleep in the clouds. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK042",
+      "name": "Ube Orb",
+      "rarity": "common",
+      "shape": "orb",
+      "palette": [
+        "#2b1340",
+        "#8e5cc9",
+        "#6a3d9e",
+        "#d7b8ff"
+      ],
+      "pattern": "plain",
+      "description": "Swirls when you shake it. Wag masyado. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK043",
+      "name": "Kalamansi Shell",
+      "rarity": "common",
+      "shape": "shell",
+      "palette": [
+        "#1f3b06",
+        "#8fd43a",
+        "#5fa31f",
+        "#e2ffb0"
+      ],
+      "pattern": "plain",
+      "description": "You can hear the sea inside. Or is that wifi? Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK044",
+      "name": "Buko Leaf",
+      "rarity": "common",
+      "shape": "leaf",
+      "palette": [
+        "#2c3a21",
+        "#f4f1de",
+        "#9cc276",
+        "#ffffff"
+      ],
+      "pattern": "plain",
+      "description": "Picked from the tallest bamboo in the bukid. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK045",
+      "name": "Gulaman Mask",
+      "rarity": "common",
+      "shape": "mask",
+      "palette": [
+        "#4a1030",
+        "#ff8fc2",
+        "#e0609c",
+        "#ffd6ea"
+      ],
+      "pattern": "plain",
+      "description": "Worn during the great Pakpak festival. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK046",
+      "name": "Tsokolate Crown",
+      "rarity": "common",
+      "shape": "crown",
+      "palette": [
+        "#2a140a",
+        "#8b5a3c",
+        "#643c24",
+        "#c9926a"
+      ],
+      "pattern": "plain",
+      "description": "Fit for the king of the sky (or a very proud maya). Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK047",
+      "name": "Dagat Key",
+      "rarity": "common",
+      "shape": "key",
+      "palette": [
+        "#0b2546",
+        "#2f7fd6",
+        "#1f5aa3",
+        "#9fd3ff"
+      ],
+      "pattern": "plain",
+      "description": "Opens something. Nobody knows what. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK048",
+      "name": "Pandan Fish",
+      "rarity": "common",
+      "shape": "fish",
+      "palette": [
+        "#0f3320",
+        "#3fbf7f",
+        "#2a8a59",
+        "#b3f5d0"
+      ],
+      "pattern": "plain",
+      "description": "Lumipad daw ito. Seryoso. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK049",
+      "name": "Langit Kabute",
+      "rarity": "common",
+      "shape": "mushroom",
+      "palette": [
+        "#16384d",
+        "#7fd1ff",
+        "#4aa6dc",
+        "#e0f6ff"
+      ],
+      "pattern": "plain",
+      "description": "Do not eat. Pang-collection lang. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK050",
+      "name": "Kape Potion",
+      "rarity": "common",
+      "shape": "potion",
+      "palette": [
+        "#21160e",
+        "#b07b4f",
+        "#7e5333",
+        "#e3bf97"
+      ],
+      "pattern": "plain",
+      "description": "Smells like kalamansi and courage. Common find, pero cute pa rin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK051",
+      "name": "Lucky Sampaguita Star",
+      "rarity": "uncommon",
+      "shape": "star",
+      "palette": [
+        "#3a3a24",
+        "#fffbe6",
+        "#e7dfb4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "A tiny star that fell asleep in the clouds. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK052",
+      "name": "Lucky Rosas Orb",
+      "rarity": "uncommon",
+      "shape": "orb",
+      "palette": [
+        "#4a0d18",
+        "#ff4d6d",
+        "#c9304e",
+        "#ffc2cf"
+      ],
+      "pattern": "stripe",
+      "description": "Swirls when you shake it. Wag masyado. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK053",
+      "name": "Lucky Bayabas Shell",
+      "rarity": "uncommon",
+      "shape": "shell",
+      "palette": [
+        "#3b1d13",
+        "#ffa07a",
+        "#7fbf4f",
+        "#ffe0d0"
+      ],
+      "pattern": "stripe",
+      "description": "You can hear the sea inside. Or is that wifi? Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK054",
+      "name": "Lucky Sunog Leaf",
+      "rarity": "uncommon",
+      "shape": "leaf",
+      "palette": [
+        "#3d1004",
+        "#ff7b29",
+        "#d4480f",
+        "#ffd09e"
+      ],
+      "pattern": "stripe",
+      "description": "Picked from the tallest bamboo in the bukid. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK055",
+      "name": "Lucky Ulap Mask",
+      "rarity": "uncommon",
+      "shape": "mask",
+      "palette": [
+        "#2b3440",
+        "#e6edf5",
+        "#b4c3d4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Worn during the great Pakpak festival. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK056",
+      "name": "Lucky Abo Crown",
+      "rarity": "uncommon",
+      "shape": "crown",
+      "palette": [
+        "#1c1c22",
+        "#8a8d99",
+        "#5f626e",
+        "#c9ccd6"
+      ],
+      "pattern": "stripe",
+      "description": "Fit for the king of the sky (or a very proud maya). Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK057",
+      "name": "Lucky Sampaguita Crown",
+      "rarity": "uncommon",
+      "shape": "crown",
+      "palette": [
+        "#3a3a24",
+        "#fffbe6",
+        "#e7dfb4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Fit for the king of the sky (or a very proud maya). Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK058",
+      "name": "Lucky Rosas Key",
+      "rarity": "uncommon",
+      "shape": "key",
+      "palette": [
+        "#4a0d18",
+        "#ff4d6d",
+        "#c9304e",
+        "#ffc2cf"
+      ],
+      "pattern": "stripe",
+      "description": "Opens something. Nobody knows what. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK059",
+      "name": "Lucky Bayabas Fish",
+      "rarity": "uncommon",
+      "shape": "fish",
+      "palette": [
+        "#3b1d13",
+        "#ffa07a",
+        "#7fbf4f",
+        "#ffe0d0"
+      ],
+      "pattern": "stripe",
+      "description": "Lumipad daw ito. Seryoso. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK060",
+      "name": "Lucky Sunog Kabute",
+      "rarity": "uncommon",
+      "shape": "mushroom",
+      "palette": [
+        "#3d1004",
+        "#ff7b29",
+        "#d4480f",
+        "#ffd09e"
+      ],
+      "pattern": "stripe",
+      "description": "Do not eat. Pang-collection lang. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK061",
+      "name": "Lucky Ulap Potion",
+      "rarity": "uncommon",
+      "shape": "potion",
+      "palette": [
+        "#2b3440",
+        "#e6edf5",
+        "#b4c3d4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Smells like kalamansi and courage. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK062",
+      "name": "Lucky Abo Bell",
+      "rarity": "uncommon",
+      "shape": "bell",
+      "palette": [
+        "#1c1c22",
+        "#8a8d99",
+        "#5f626e",
+        "#c9ccd6"
+      ],
+      "pattern": "stripe",
+      "description": "Rings once for every perfect flap. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK063",
+      "name": "Lucky Sampaguita Bell",
+      "rarity": "uncommon",
+      "shape": "bell",
+      "palette": [
+        "#3a3a24",
+        "#fffbe6",
+        "#e7dfb4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Rings once for every perfect flap. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK064",
+      "name": "Lucky Rosas Ring",
+      "rarity": "uncommon",
+      "shape": "ring",
+      "palette": [
+        "#4a0d18",
+        "#ff4d6d",
+        "#c9304e",
+        "#ffc2cf"
+      ],
+      "pattern": "stripe",
+      "description": "A loop of pure determination. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK065",
+      "name": "Lucky Bayabas Shard",
+      "rarity": "uncommon",
+      "shape": "shard",
+      "palette": [
+        "#3b1d13",
+        "#ffa07a",
+        "#7fbf4f",
+        "#ffe0d0"
+      ],
+      "pattern": "stripe",
+      "description": "Broken piece of a storm cloud. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK066",
+      "name": "Lucky Sunog Egg",
+      "rarity": "uncommon",
+      "shape": "egg",
+      "palette": [
+        "#3d1004",
+        "#ff7b29",
+        "#d4480f",
+        "#ffd09e"
+      ],
+      "pattern": "stripe",
+      "description": "Something is moving inside... Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK067",
+      "name": "Lucky Ulap Bloom",
+      "rarity": "uncommon",
+      "shape": "flower",
+      "palette": [
+        "#2b3440",
+        "#e6edf5",
+        "#b4c3d4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Blooms only above the clouds. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK068",
+      "name": "Lucky Abo Heart",
+      "rarity": "uncommon",
+      "shape": "heart",
+      "palette": [
+        "#1c1c22",
+        "#8a8d99",
+        "#5f626e",
+        "#c9ccd6"
+      ],
+      "pattern": "stripe",
+      "description": "For every bird who never gave up. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK069",
+      "name": "Lucky Sampaguita Heart",
+      "rarity": "uncommon",
+      "shape": "heart",
+      "palette": [
+        "#3a3a24",
+        "#fffbe6",
+        "#e7dfb4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "For every bird who never gave up. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK070",
+      "name": "Lucky Rosas Feather",
+      "rarity": "uncommon",
+      "shape": "feather",
+      "palette": [
+        "#4a0d18",
+        "#ff4d6d",
+        "#c9304e",
+        "#ffc2cf"
+      ],
+      "pattern": "stripe",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK071",
+      "name": "Lucky Bayabas Gem",
+      "rarity": "uncommon",
+      "shape": "gem",
+      "palette": [
+        "#3b1d13",
+        "#ffa07a",
+        "#7fbf4f",
+        "#ffe0d0"
+      ],
+      "pattern": "stripe",
+      "description": "Cut by wind, polished by rain. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK072",
+      "name": "Lucky Sunog Star",
+      "rarity": "uncommon",
+      "shape": "star",
+      "palette": [
+        "#3d1004",
+        "#ff7b29",
+        "#d4480f",
+        "#ffd09e"
+      ],
+      "pattern": "stripe",
+      "description": "A tiny star that fell asleep in the clouds. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK073",
+      "name": "Lucky Ulap Orb",
+      "rarity": "uncommon",
+      "shape": "orb",
+      "palette": [
+        "#2b3440",
+        "#e6edf5",
+        "#b4c3d4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Swirls when you shake it. Wag masyado. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK074",
+      "name": "Lucky Abo Shell",
+      "rarity": "uncommon",
+      "shape": "shell",
+      "palette": [
+        "#1c1c22",
+        "#8a8d99",
+        "#5f626e",
+        "#c9ccd6"
+      ],
+      "pattern": "stripe",
+      "description": "You can hear the sea inside. Or is that wifi? Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK075",
+      "name": "Lucky Sampaguita Shell",
+      "rarity": "uncommon",
+      "shape": "shell",
+      "palette": [
+        "#3a3a24",
+        "#fffbe6",
+        "#e7dfb4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "You can hear the sea inside. Or is that wifi? Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK076",
+      "name": "Lucky Rosas Leaf",
+      "rarity": "uncommon",
+      "shape": "leaf",
+      "palette": [
+        "#4a0d18",
+        "#ff4d6d",
+        "#c9304e",
+        "#ffc2cf"
+      ],
+      "pattern": "stripe",
+      "description": "Picked from the tallest bamboo in the bukid. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK077",
+      "name": "Lucky Bayabas Mask",
+      "rarity": "uncommon",
+      "shape": "mask",
+      "palette": [
+        "#3b1d13",
+        "#ffa07a",
+        "#7fbf4f",
+        "#ffe0d0"
+      ],
+      "pattern": "stripe",
+      "description": "Worn during the great Pakpak festival. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK078",
+      "name": "Lucky Sunog Crown",
+      "rarity": "uncommon",
+      "shape": "crown",
+      "palette": [
+        "#3d1004",
+        "#ff7b29",
+        "#d4480f",
+        "#ffd09e"
+      ],
+      "pattern": "stripe",
+      "description": "Fit for the king of the sky (or a very proud maya). Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK079",
+      "name": "Lucky Ulap Key",
+      "rarity": "uncommon",
+      "shape": "key",
+      "palette": [
+        "#2b3440",
+        "#e6edf5",
+        "#b4c3d4",
+        "#ffffff"
+      ],
+      "pattern": "stripe",
+      "description": "Opens something. Nobody knows what. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK080",
+      "name": "Lucky Abo Fish",
+      "rarity": "uncommon",
+      "shape": "fish",
+      "palette": [
+        "#1c1c22",
+        "#8a8d99",
+        "#5f626e",
+        "#c9ccd6"
+      ],
+      "pattern": "stripe",
+      "description": "Lumipad daw ito. Seryoso. Swerte mo today!",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK081",
+      "name": "Gilded Ginto Leaf",
+      "rarity": "elite",
+      "shape": "leaf",
+      "palette": [
+        "#4a3000",
+        "#ffd23f",
+        "#d9a400",
+        "#fff6c2"
+      ],
+      "pattern": "spots",
+      "description": "Picked from the tallest bamboo in the bukid. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "milestone",
+        "key": "medal_bronze",
+        "label": "Earn your first Bronze medal"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK082",
+      "name": "Gilded Pilak Mask",
+      "rarity": "elite",
+      "shape": "mask",
+      "palette": [
+        "#23272e",
+        "#c9d1db",
+        "#8f99a8",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Worn during the great Pakpak festival. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "milestone",
+        "key": "medal_silver",
+        "label": "Earn your first Silver medal"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK083",
+      "name": "Gilded Perlas Crown",
+      "rarity": "elite",
+      "shape": "crown",
+      "palette": [
+        "#3d3346",
+        "#f6e9ff",
+        "#d3bfe6",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Fit for the king of the sky (or a very proud maya). Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK084",
+      "name": "Gilded Hade Key",
+      "rarity": "elite",
+      "shape": "key",
+      "palette": [
+        "#0a2e22",
+        "#2ecc8f",
+        "#1c9467",
+        "#a6ffd9"
+      ],
+      "pattern": "spots",
+      "description": "Opens something. Nobody knows what. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK085",
+      "name": "Gilded Narra Fish",
+      "rarity": "elite",
+      "shape": "fish",
+      "palette": [
+        "#2e0e06",
+        "#b9462a",
+        "#86301b",
+        "#f29a7c"
+      ],
+      "pattern": "spots",
+      "description": "Lumipad daw ito. Seryoso. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK086",
+      "name": "Gilded Ginto Kabute",
+      "rarity": "elite",
+      "shape": "mushroom",
+      "palette": [
+        "#4a3000",
+        "#ffd23f",
+        "#d9a400",
+        "#fff6c2"
+      ],
+      "pattern": "spots",
+      "description": "Do not eat. Pang-collection lang. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK087",
+      "name": "Gilded Pilak Potion",
+      "rarity": "elite",
+      "shape": "potion",
+      "palette": [
+        "#23272e",
+        "#c9d1db",
+        "#8f99a8",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Smells like kalamansi and courage. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK088",
+      "name": "Gilded Perlas Bell",
+      "rarity": "elite",
+      "shape": "bell",
+      "palette": [
+        "#3d3346",
+        "#f6e9ff",
+        "#d3bfe6",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Rings once for every perfect flap. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK089",
+      "name": "Gilded Hade Ring",
+      "rarity": "elite",
+      "shape": "ring",
+      "palette": [
+        "#0a2e22",
+        "#2ecc8f",
+        "#1c9467",
+        "#a6ffd9"
+      ],
+      "pattern": "spots",
+      "description": "A loop of pure determination. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK090",
+      "name": "Gilded Narra Shard",
+      "rarity": "elite",
+      "shape": "shard",
+      "palette": [
+        "#2e0e06",
+        "#b9462a",
+        "#86301b",
+        "#f29a7c"
+      ],
+      "pattern": "spots",
+      "description": "Broken piece of a storm cloud. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK091",
+      "name": "Gilded Ginto Egg",
+      "rarity": "elite",
+      "shape": "egg",
+      "palette": [
+        "#4a3000",
+        "#ffd23f",
+        "#d9a400",
+        "#fff6c2"
+      ],
+      "pattern": "spots",
+      "description": "Something is moving inside... Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK092",
+      "name": "Gilded Pilak Bloom",
+      "rarity": "elite",
+      "shape": "flower",
+      "palette": [
+        "#23272e",
+        "#c9d1db",
+        "#8f99a8",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Blooms only above the clouds. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK093",
+      "name": "Gilded Perlas Heart",
+      "rarity": "elite",
+      "shape": "heart",
+      "palette": [
+        "#3d3346",
+        "#f6e9ff",
+        "#d3bfe6",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "For every bird who never gave up. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK094",
+      "name": "Gilded Hade Feather",
+      "rarity": "elite",
+      "shape": "feather",
+      "palette": [
+        "#0a2e22",
+        "#2ecc8f",
+        "#1c9467",
+        "#a6ffd9"
+      ],
+      "pattern": "spots",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK095",
+      "name": "Gilded Narra Gem",
+      "rarity": "elite",
+      "shape": "gem",
+      "palette": [
+        "#2e0e06",
+        "#b9462a",
+        "#86301b",
+        "#f29a7c"
+      ],
+      "pattern": "spots",
+      "description": "Cut by wind, polished by rain. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK096",
+      "name": "Gilded Ginto Star",
+      "rarity": "elite",
+      "shape": "star",
+      "palette": [
+        "#4a3000",
+        "#ffd23f",
+        "#d9a400",
+        "#fff6c2"
+      ],
+      "pattern": "spots",
+      "description": "A tiny star that fell asleep in the clouds. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK097",
+      "name": "Gilded Pilak Orb",
+      "rarity": "elite",
+      "shape": "orb",
+      "palette": [
+        "#23272e",
+        "#c9d1db",
+        "#8f99a8",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "Swirls when you shake it. Wag masyado. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK098",
+      "name": "Gilded Perlas Shell",
+      "rarity": "elite",
+      "shape": "shell",
+      "palette": [
+        "#3d3346",
+        "#f6e9ff",
+        "#d3bfe6",
+        "#ffffff"
+      ],
+      "pattern": "spots",
+      "description": "You can hear the sea inside. Or is that wifi? Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK099",
+      "name": "Gilded Hade Leaf",
+      "rarity": "elite",
+      "shape": "leaf",
+      "palette": [
+        "#0a2e22",
+        "#2ecc8f",
+        "#1c9467",
+        "#a6ffd9"
+      ],
+      "pattern": "spots",
+      "description": "Picked from the tallest bamboo in the bukid. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK100",
+      "name": "Gilded Narra Mask",
+      "rarity": "elite",
+      "shape": "mask",
+      "palette": [
+        "#2e0e06",
+        "#b9462a",
+        "#86301b",
+        "#f29a7c"
+      ],
+      "pattern": "spots",
+      "description": "Worn during the great Pakpak festival. Gilded edges, elite energy.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK101",
+      "name": "Shining Rubi Fish",
+      "rarity": "rare",
+      "shape": "fish",
+      "palette": [
+        "#3d0010",
+        "#ff1f4b",
+        "#b8002c",
+        "#ff9fb4"
+      ],
+      "pattern": "shine",
+      "description": "Lumipad daw ito. Seryoso. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "adventure",
+        "level": "1-5",
+        "label": "Master Adventure level 1-5"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK102",
+      "name": "Shining Sapiro Kabute",
+      "rarity": "rare",
+      "shape": "mushroom",
+      "palette": [
+        "#000d3d",
+        "#2953ff",
+        "#1534b8",
+        "#a3b6ff"
+      ],
+      "pattern": "shine",
+      "description": "Do not eat. Pang-collection lang. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "adventure",
+        "level": "2-5",
+        "label": "Master Adventure level 2-5"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK103",
+      "name": "Shining Esmeralda Potion",
+      "rarity": "rare",
+      "shape": "potion",
+      "palette": [
+        "#00331a",
+        "#16d46b",
+        "#0a944a",
+        "#9dffc8"
+      ],
+      "pattern": "shine",
+      "description": "Smells like kalamansi and courage. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "adventure",
+        "level": "3-5",
+        "label": "Master Adventure level 3-5"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK104",
+      "name": "Shining Amatista Bell",
+      "rarity": "rare",
+      "shape": "bell",
+      "palette": [
+        "#24003d",
+        "#a64dff",
+        "#7311d1",
+        "#e0bfff"
+      ],
+      "pattern": "shine",
+      "description": "Rings once for every perfect flap. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "adventure",
+        "level": "4-5",
+        "label": "Master Adventure level 4-5"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK105",
+      "name": "Shining Topasyo Ring",
+      "rarity": "rare",
+      "shape": "ring",
+      "palette": [
+        "#3d2400",
+        "#ffad1f",
+        "#d17d00",
+        "#ffe2a8"
+      ],
+      "pattern": "shine",
+      "description": "A loop of pure determination. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "milestone",
+        "key": "medal_gold",
+        "label": "Earn your first Gold medal"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK106",
+      "name": "Shining Rubi Shard",
+      "rarity": "rare",
+      "shape": "shard",
+      "palette": [
+        "#3d0010",
+        "#ff1f4b",
+        "#b8002c",
+        "#ff9fb4"
+      ],
+      "pattern": "shine",
+      "description": "Broken piece of a storm cloud. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK107",
+      "name": "Shining Sapiro Egg",
+      "rarity": "rare",
+      "shape": "egg",
+      "palette": [
+        "#000d3d",
+        "#2953ff",
+        "#1534b8",
+        "#a3b6ff"
+      ],
+      "pattern": "shine",
+      "description": "Something is moving inside... It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK108",
+      "name": "Shining Esmeralda Bloom",
+      "rarity": "rare",
+      "shape": "flower",
+      "palette": [
+        "#00331a",
+        "#16d46b",
+        "#0a944a",
+        "#9dffc8"
+      ],
+      "pattern": "shine",
+      "description": "Blooms only above the clouds. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK109",
+      "name": "Shining Amatista Heart",
+      "rarity": "rare",
+      "shape": "heart",
+      "palette": [
+        "#24003d",
+        "#a64dff",
+        "#7311d1",
+        "#e0bfff"
+      ],
+      "pattern": "shine",
+      "description": "For every bird who never gave up. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK110",
+      "name": "Shining Topasyo Feather",
+      "rarity": "rare",
+      "shape": "feather",
+      "palette": [
+        "#3d2400",
+        "#ffad1f",
+        "#d17d00",
+        "#ffe2a8"
+      ],
+      "pattern": "shine",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK111",
+      "name": "Shining Rubi Gem",
+      "rarity": "rare",
+      "shape": "gem",
+      "palette": [
+        "#3d0010",
+        "#ff1f4b",
+        "#b8002c",
+        "#ff9fb4"
+      ],
+      "pattern": "shine",
+      "description": "Cut by wind, polished by rain. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK112",
+      "name": "Shining Sapiro Star",
+      "rarity": "rare",
+      "shape": "star",
+      "palette": [
+        "#000d3d",
+        "#2953ff",
+        "#1534b8",
+        "#a3b6ff"
+      ],
+      "pattern": "shine",
+      "description": "A tiny star that fell asleep in the clouds. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK113",
+      "name": "Shining Esmeralda Orb",
+      "rarity": "rare",
+      "shape": "orb",
+      "palette": [
+        "#00331a",
+        "#16d46b",
+        "#0a944a",
+        "#9dffc8"
+      ],
+      "pattern": "shine",
+      "description": "Swirls when you shake it. Wag masyado. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK114",
+      "name": "Shining Amatista Shell",
+      "rarity": "rare",
+      "shape": "shell",
+      "palette": [
+        "#24003d",
+        "#a64dff",
+        "#7311d1",
+        "#e0bfff"
+      ],
+      "pattern": "shine",
+      "description": "You can hear the sea inside. Or is that wifi? It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK115",
+      "name": "Shining Topasyo Leaf",
+      "rarity": "rare",
+      "shape": "leaf",
+      "palette": [
+        "#3d2400",
+        "#ffad1f",
+        "#d17d00",
+        "#ffe2a8"
+      ],
+      "pattern": "shine",
+      "description": "Picked from the tallest bamboo in the bukid. It sparkles when nobody is looking.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK116",
+      "name": "Radiant Aurora Ring",
+      "rarity": "ultra",
+      "shape": "ring",
+      "palette": [
+        "#06283d",
+        "#47ffd1",
+        "#ff5fd2",
+        "#f0fffb"
+      ],
+      "pattern": "glow",
+      "description": "A loop of pure determination. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "milestone",
+        "key": "medal_platinum",
+        "label": "Earn your first Platinum medal"
+      },
+      "tradeable": false,
+      "inDropPool": false,
+      "maxSupply": null
+    },
+    {
+      "id": "PK117",
+      "name": "Radiant Lava Shard",
+      "rarity": "ultra",
+      "shape": "shard",
+      "palette": [
+        "#2a0500",
+        "#ff4a1c",
+        "#ffb01f",
+        "#fff0a8"
+      ],
+      "pattern": "glow",
+      "description": "Broken piece of a storm cloud. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK118",
+      "name": "Radiant Glacier Egg",
+      "rarity": "ultra",
+      "shape": "egg",
+      "palette": [
+        "#062a3d",
+        "#9cf0ff",
+        "#4cb8ff",
+        "#ffffff"
+      ],
+      "pattern": "glow",
+      "description": "Something is moving inside... Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK119",
+      "name": "Radiant Bagyo Bloom",
+      "rarity": "ultra",
+      "shape": "flower",
+      "palette": [
+        "#14142e",
+        "#6a6ad9",
+        "#3d3d99",
+        "#d9d9ff"
+      ],
+      "pattern": "glow",
+      "description": "Blooms only above the clouds. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK120",
+      "name": "Radiant Bulaklak Heart",
+      "rarity": "ultra",
+      "shape": "heart",
+      "palette": [
+        "#3d0630",
+        "#ff6ad5",
+        "#ffd23f",
+        "#ffe6f7"
+      ],
+      "pattern": "glow",
+      "description": "For every bird who never gave up. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK121",
+      "name": "Radiant Aurora Feather",
+      "rarity": "ultra",
+      "shape": "feather",
+      "palette": [
+        "#06283d",
+        "#47ffd1",
+        "#ff5fd2",
+        "#f0fffb"
+      ],
+      "pattern": "glow",
+      "description": "Nalaglag mula sa ibong sobrang bilis lumipad. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK122",
+      "name": "Radiant Lava Gem",
+      "rarity": "ultra",
+      "shape": "gem",
+      "palette": [
+        "#2a0500",
+        "#ff4a1c",
+        "#ffb01f",
+        "#fff0a8"
+      ],
+      "pattern": "glow",
+      "description": "Cut by wind, polished by rain. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK123",
+      "name": "Radiant Glacier Star",
+      "rarity": "ultra",
+      "shape": "star",
+      "palette": [
+        "#062a3d",
+        "#9cf0ff",
+        "#4cb8ff",
+        "#ffffff"
+      ],
+      "pattern": "glow",
+      "description": "A tiny star that fell asleep in the clouds. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK124",
+      "name": "Radiant Bagyo Orb",
+      "rarity": "ultra",
+      "shape": "orb",
+      "palette": [
+        "#14142e",
+        "#6a6ad9",
+        "#3d3d99",
+        "#d9d9ff"
+      ],
+      "pattern": "glow",
+      "description": "Swirls when you shake it. Wag masyado. Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK125",
+      "name": "Radiant Bulaklak Shell",
+      "rarity": "ultra",
+      "shape": "shell",
+      "palette": [
+        "#3d0630",
+        "#ff6ad5",
+        "#ffd23f",
+        "#ffe6f7"
+      ],
+      "pattern": "glow",
+      "description": "You can hear the sea inside. Or is that wifi? Glows faintly and hums softly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (Endless and Adventure)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK126",
+      "name": "Sarimanok Plume",
+      "rarity": "legendary",
+      "shape": "feather",
+      "palette": [
+        "#2a0b3d",
+        "#ff3d7f",
+        "#ffd23f",
+        "#3dfcff"
+      ],
+      "pattern": "prism",
+      "description": "A plume from the legendary Sarimanok. Bringer of good fortune, ayon sa mga lola.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (very rare)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK127",
+      "name": "Bakunawa Scale",
+      "rarity": "legendary",
+      "shape": "shard",
+      "palette": [
+        "#0a1f2e",
+        "#3d9cff",
+        "#7dff5c",
+        "#e0fff4"
+      ],
+      "pattern": "prism",
+      "description": "Shed by the great sea serpent who once tried to swallow the moon.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (very rare)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK128",
+      "name": "Diwata Crown",
+      "rarity": "legendary",
+      "shape": "crown",
+      "palette": [
+        "#1a3300",
+        "#9dff3d",
+        "#ffd23f",
+        "#ffffff"
+      ],
+      "pattern": "prism",
+      "description": "Worn by the forest guardian. Bawal hiramin.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (very rare)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK129",
+      "name": "Mutya Pearl",
+      "rarity": "legendary",
+      "shape": "orb",
+      "palette": [
+        "#33001f",
+        "#ffd6f2",
+        "#c08cff",
+        "#ffffff"
+      ],
+      "pattern": "prism",
+      "description": "A charm said to grant one wish. Wala pang nakakaubos.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (very rare)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK130",
+      "name": "Agimat Ring",
+      "rarity": "legendary",
+      "shape": "ring",
+      "palette": [
+        "#2e1a00",
+        "#ffb52e",
+        "#ff4a1c",
+        "#fff6c2"
+      ],
+      "pattern": "prism",
+      "description": "An amulet ring that makes its owner un-bonkable. Mostly.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (very rare)"
+      },
+      "tradeable": true,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK131",
+      "name": "Araw ni Bathala",
+      "rarity": "celestial",
+      "shape": "sun",
+      "palette": [
+        "#4a1a00",
+        "#ffe14d",
+        "#ff8a1f",
+        "#ffffff"
+      ],
+      "pattern": "cosmic",
+      "description": "The sun of Bathala himself. Sobrang init, ingat.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (exceptionally rare)"
+      },
+      "tradeable": false,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK132",
+      "name": "Buwan ni Mayari",
+      "rarity": "celestial",
+      "shape": "moon",
+      "palette": [
+        "#0d1033",
+        "#e6ecff",
+        "#9fb2ff",
+        "#ffffff"
+      ],
+      "pattern": "cosmic",
+      "description": "Moonlight from Mayari, goddess of the moon. Only 1 in thousands ever see it.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (exceptionally rare)"
+      },
+      "tradeable": false,
+      "inDropPool": true,
+      "maxSupply": null
+    },
+    {
+      "id": "PK133",
+      "name": "Kometa ni Tala",
+      "rarity": "celestial",
+      "shape": "comet",
+      "palette": [
+        "#001433",
+        "#7df9ff",
+        "#c08cff",
+        "#ffffff"
+      ],
+      "pattern": "cosmic",
+      "description": "A comet thrown by Tala, goddess of the stars. Make a wish, lods.",
+      "acquisition": {
+        "type": "capsule",
+        "label": "Mystery capsules (exceptionally rare)"
+      },
+      "tradeable": false,
+      "inDropPool": true,
+      "maxSupply": null
+    }
+  ]
+}

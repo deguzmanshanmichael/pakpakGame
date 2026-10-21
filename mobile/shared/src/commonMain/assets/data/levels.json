@@ -1,0 +1,831 @@
+{
+  "version": 1,
+  "chapters": [
+    {
+      "n": 1,
+      "name": "Bukid Meadows",
+      "theme": "meadow",
+      "obstacle": "bamboo"
+    },
+    {
+      "n": 2,
+      "name": "Baybay Shores",
+      "theme": "beach",
+      "obstacle": "palm"
+    },
+    {
+      "n": 3,
+      "name": "Kweba Caverns",
+      "theme": "cave",
+      "obstacle": "rock"
+    },
+    {
+      "n": 4,
+      "name": "Bituin Skies",
+      "theme": "sky",
+      "obstacle": "crystal"
+    }
+  ],
+  "levels": [
+    {
+      "id": "1-1",
+      "chapter": 1,
+      "chapterName": "Bukid Meadows",
+      "index": 1,
+      "order": 0,
+      "name": "First Flaps",
+      "theme": "meadow",
+      "obstacle": "bamboo",
+      "seed": 1000,
+      "length": 10,
+      "speed": 66,
+      "spacing": 112,
+      "gapStart": 94,
+      "gapEnd": 88,
+      "moveAmp": 0,
+      "moveChance": 0,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 3,
+      "objective": {
+        "type": "finish",
+        "target": 10,
+        "label": "Pass all 10 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 3 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 32,
+          "label": "Finish using 32 flaps or fewer"
+        }
+      ],
+      "reward": 30,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "1-2",
+      "chapter": 1,
+      "chapterName": "Bukid Meadows",
+      "index": 2,
+      "order": 1,
+      "name": "Rice Terraces",
+      "theme": "meadow",
+      "obstacle": "bamboo",
+      "seed": 8919,
+      "length": 14,
+      "speed": 68,
+      "spacing": 112,
+      "gapStart": 93,
+      "gapEnd": 87,
+      "moveAmp": 0,
+      "moveChance": 0,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 4,
+      "objective": {
+        "type": "gems",
+        "target": 3,
+        "label": "Collect 3 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 4 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 42,
+          "label": "Finish using 42 flaps or fewer"
+        }
+      ],
+      "reward": 38,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "1-3",
+      "chapter": 1,
+      "chapterName": "Bukid Meadows",
+      "index": 3,
+      "order": 2,
+      "name": "Carabao Crossing",
+      "theme": "meadow",
+      "obstacle": "bamboo",
+      "seed": 16838,
+      "length": 18,
+      "speed": 70,
+      "spacing": 111,
+      "gapStart": 93,
+      "gapEnd": 86,
+      "moveAmp": 0,
+      "moveChance": 0,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 4,
+      "objective": {
+        "type": "finish",
+        "target": 18,
+        "label": "Pass all 18 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 4 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 52,
+          "label": "Finish using 52 flaps or fewer"
+        }
+      ],
+      "reward": 46,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "1-4",
+      "chapter": 1,
+      "chapterName": "Bukid Meadows",
+      "index": 4,
+      "order": 3,
+      "name": "Windmill Way",
+      "theme": "meadow",
+      "obstacle": "bamboo",
+      "seed": 24757,
+      "length": 22,
+      "speed": 71,
+      "spacing": 111,
+      "gapStart": 92,
+      "gapEnd": 85,
+      "moveAmp": 0,
+      "moveChance": 0,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "gems",
+        "target": 4,
+        "label": "Collect 4 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 61,
+          "label": "Finish using 61 flaps or fewer"
+        }
+      ],
+      "reward": 54,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "1-5",
+      "chapter": 1,
+      "chapterName": "Bukid Meadows",
+      "index": 5,
+      "order": 4,
+      "name": "Bamboo Gate",
+      "theme": "meadow",
+      "obstacle": "bamboo",
+      "seed": 32676,
+      "length": 26,
+      "speed": 73,
+      "spacing": 110,
+      "gapStart": 91,
+      "gapEnd": 84,
+      "moveAmp": 0,
+      "moveChance": 0,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "finish",
+        "target": 26,
+        "label": "Pass all 26 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 71,
+          "label": "Finish using 71 flaps or fewer"
+        }
+      ],
+      "reward": 62,
+      "bonusReward": 15,
+      "masteryItem": "PK101"
+    },
+    {
+      "id": "2-1",
+      "chapter": 2,
+      "chapterName": "Baybay Shores",
+      "index": 1,
+      "order": 5,
+      "name": "Low Tide",
+      "theme": "beach",
+      "obstacle": "palm",
+      "seed": 40595,
+      "length": 13,
+      "speed": 75,
+      "spacing": 110,
+      "gapStart": 90,
+      "gapEnd": 82,
+      "moveAmp": 6,
+      "moveChance": 0.25,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 4,
+      "objective": {
+        "type": "finish",
+        "target": 13,
+        "label": "Pass all 13 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 4 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 40,
+          "label": "Finish using 40 flaps or fewer"
+        }
+      ],
+      "reward": 70,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "2-2",
+      "chapter": 2,
+      "chapterName": "Baybay Shores",
+      "index": 2,
+      "order": 6,
+      "name": "Coconut Run",
+      "theme": "beach",
+      "obstacle": "palm",
+      "seed": 48514,
+      "length": 17,
+      "speed": 77,
+      "spacing": 109,
+      "gapStart": 90,
+      "gapEnd": 82,
+      "moveAmp": 8,
+      "moveChance": 0.3,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 4,
+      "objective": {
+        "type": "gems",
+        "target": 3,
+        "label": "Collect 3 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 4 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 49,
+          "label": "Finish using 49 flaps or fewer"
+        }
+      ],
+      "reward": 78,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "2-3",
+      "chapter": 2,
+      "chapterName": "Baybay Shores",
+      "index": 3,
+      "order": 7,
+      "name": "Bangka Bay",
+      "theme": "beach",
+      "obstacle": "palm",
+      "seed": 56433,
+      "length": 21,
+      "speed": 79,
+      "spacing": 109,
+      "gapStart": 89,
+      "gapEnd": 81,
+      "moveAmp": 10,
+      "moveChance": 0.35,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "survive",
+        "target": 25,
+        "label": "Survive 25 seconds"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 59,
+          "label": "Finish using 59 flaps or fewer"
+        }
+      ],
+      "reward": 86,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "2-4",
+      "chapter": 2,
+      "chapterName": "Baybay Shores",
+      "index": 4,
+      "order": 8,
+      "name": "Shifting Sands",
+      "theme": "beach",
+      "obstacle": "palm",
+      "seed": 64352,
+      "length": 25,
+      "speed": 80,
+      "spacing": 109,
+      "gapStart": 88,
+      "gapEnd": 79,
+      "moveAmp": 12,
+      "moveChance": 0.4,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "gems",
+        "target": 4,
+        "label": "Collect 4 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 68,
+          "label": "Finish using 68 flaps or fewer"
+        }
+      ],
+      "reward": 94,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "2-5",
+      "chapter": 2,
+      "chapterName": "Baybay Shores",
+      "index": 5,
+      "order": 9,
+      "name": "Tidal Tower",
+      "theme": "beach",
+      "obstacle": "palm",
+      "seed": 72271,
+      "length": 29,
+      "speed": 82,
+      "spacing": 108,
+      "gapStart": 87,
+      "gapEnd": 78,
+      "moveAmp": 14,
+      "moveChance": 0.45,
+      "hazardChance": 0,
+      "wind": 0,
+      "gems": 6,
+      "objective": {
+        "type": "finish",
+        "target": 29,
+        "label": "Pass all 29 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 6 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 78,
+          "label": "Finish using 78 flaps or fewer"
+        }
+      ],
+      "reward": 102,
+      "bonusReward": 15,
+      "masteryItem": "PK102"
+    },
+    {
+      "id": "3-1",
+      "chapter": 3,
+      "chapterName": "Kweba Caverns",
+      "index": 1,
+      "order": 10,
+      "name": "Echo Entrance",
+      "theme": "cave",
+      "obstacle": "rock",
+      "seed": 80190,
+      "length": 16,
+      "speed": 84,
+      "spacing": 108,
+      "gapStart": 87,
+      "gapEnd": 78,
+      "moveAmp": 10,
+      "moveChance": 0.45,
+      "hazardChance": 0.15,
+      "wind": 0,
+      "gems": 4,
+      "objective": {
+        "type": "finish",
+        "target": 16,
+        "label": "Pass all 16 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 4 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 47,
+          "label": "Finish using 47 flaps or fewer"
+        }
+      ],
+      "reward": 110,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "3-2",
+      "chapter": 3,
+      "chapterName": "Kweba Caverns",
+      "index": 2,
+      "order": 11,
+      "name": "Crystal Drip",
+      "theme": "cave",
+      "obstacle": "rock",
+      "seed": 88109,
+      "length": 20,
+      "speed": 86,
+      "spacing": 107,
+      "gapStart": 86,
+      "gapEnd": 77,
+      "moveAmp": 12,
+      "moveChance": 0.5,
+      "hazardChance": 0.19,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "gems",
+        "target": 4,
+        "label": "Collect 4 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 56,
+          "label": "Finish using 56 flaps or fewer"
+        }
+      ],
+      "reward": 118,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "3-3",
+      "chapter": 3,
+      "chapterName": "Kweba Caverns",
+      "index": 3,
+      "order": 12,
+      "name": "Spiky Hollow",
+      "theme": "cave",
+      "obstacle": "rock",
+      "seed": 96028,
+      "length": 24,
+      "speed": 87,
+      "spacing": 107,
+      "gapStart": 85,
+      "gapEnd": 75,
+      "moveAmp": 14,
+      "moveChance": 0.55,
+      "hazardChance": 0.22999999999999998,
+      "wind": 0,
+      "gems": 5,
+      "objective": {
+        "type": "survive",
+        "target": 30,
+        "label": "Survive 30 seconds"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 66,
+          "label": "Finish using 66 flaps or fewer"
+        }
+      ],
+      "reward": 126,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "3-4",
+      "chapter": 3,
+      "chapterName": "Kweba Caverns",
+      "index": 4,
+      "order": 13,
+      "name": "Bat Tunnel",
+      "theme": "cave",
+      "obstacle": "rock",
+      "seed": 103947,
+      "length": 28,
+      "speed": 89,
+      "spacing": 107,
+      "gapStart": 84,
+      "gapEnd": 74,
+      "moveAmp": 16,
+      "moveChance": 0.6000000000000001,
+      "hazardChance": 0.27,
+      "wind": 0,
+      "gems": 6,
+      "objective": {
+        "type": "gems",
+        "target": 5,
+        "label": "Collect 5 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 6 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 76,
+          "label": "Finish using 76 flaps or fewer"
+        }
+      ],
+      "reward": 134,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "3-5",
+      "chapter": 3,
+      "chapterName": "Kweba Caverns",
+      "index": 5,
+      "order": 14,
+      "name": "Heart of the Cave",
+      "theme": "cave",
+      "obstacle": "rock",
+      "seed": 111866,
+      "length": 32,
+      "speed": 91,
+      "spacing": 106,
+      "gapStart": 84,
+      "gapEnd": 74,
+      "moveAmp": 18,
+      "moveChance": 0.65,
+      "hazardChance": 0.31,
+      "wind": 0,
+      "gems": 6,
+      "objective": {
+        "type": "finish",
+        "target": 32,
+        "label": "Pass all 32 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 6 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 85,
+          "label": "Finish using 85 flaps or fewer"
+        }
+      ],
+      "reward": 142,
+      "bonusReward": 15,
+      "masteryItem": "PK103"
+    },
+    {
+      "id": "4-1",
+      "chapter": 4,
+      "chapterName": "Bituin Skies",
+      "index": 1,
+      "order": 15,
+      "name": "Cloud Steps",
+      "theme": "sky",
+      "obstacle": "crystal",
+      "seed": 119785,
+      "length": 19,
+      "speed": 93,
+      "spacing": 106,
+      "gapStart": 83,
+      "gapEnd": 72,
+      "moveAmp": 14,
+      "moveChance": 0.65,
+      "hazardChance": 0.3,
+      "wind": 80,
+      "gems": 5,
+      "objective": {
+        "type": "finish",
+        "target": 19,
+        "label": "Pass all 19 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 54,
+          "label": "Finish using 54 flaps or fewer"
+        }
+      ],
+      "reward": 150,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "4-2",
+      "chapter": 4,
+      "chapterName": "Bituin Skies",
+      "index": 2,
+      "order": 16,
+      "name": "Gusty Heights",
+      "theme": "sky",
+      "obstacle": "crystal",
+      "seed": 127704,
+      "length": 23,
+      "speed": 95,
+      "spacing": 105,
+      "gapStart": 82,
+      "gapEnd": 71,
+      "moveAmp": 16,
+      "moveChance": 0.7000000000000001,
+      "hazardChance": 0.33999999999999997,
+      "wind": 95,
+      "gems": 5,
+      "objective": {
+        "type": "gems",
+        "target": 4,
+        "label": "Collect 4 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 5 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 64,
+          "label": "Finish using 64 flaps or fewer"
+        }
+      ],
+      "reward": 158,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "4-3",
+      "chapter": 4,
+      "chapterName": "Bituin Skies",
+      "index": 3,
+      "order": 17,
+      "name": "Starlit Drift",
+      "theme": "sky",
+      "obstacle": "crystal",
+      "seed": 135623,
+      "length": 27,
+      "speed": 96,
+      "spacing": 105,
+      "gapStart": 81,
+      "gapEnd": 70,
+      "moveAmp": 18,
+      "moveChance": 0.75,
+      "hazardChance": 0.38,
+      "wind": 110,
+      "gems": 6,
+      "objective": {
+        "type": "survive",
+        "target": 35,
+        "label": "Survive 35 seconds"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 6 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 73,
+          "label": "Finish using 73 flaps or fewer"
+        }
+      ],
+      "reward": 166,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "4-4",
+      "chapter": 4,
+      "chapterName": "Bituin Skies",
+      "index": 4,
+      "order": 18,
+      "name": "Comet Trail",
+      "theme": "sky",
+      "obstacle": "crystal",
+      "seed": 143542,
+      "length": 31,
+      "speed": 98,
+      "spacing": 104,
+      "gapStart": 81,
+      "gapEnd": 69,
+      "moveAmp": 20,
+      "moveChance": 0.8,
+      "hazardChance": 0.42,
+      "wind": 125,
+      "gems": 6,
+      "objective": {
+        "type": "gems",
+        "target": 5,
+        "label": "Collect 5 gems and reach the gate"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 6 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 83,
+          "label": "Finish using 83 flaps or fewer"
+        }
+      ],
+      "reward": 174,
+      "bonusReward": 15,
+      "masteryItem": null
+    },
+    {
+      "id": "4-5",
+      "chapter": 4,
+      "chapterName": "Bituin Skies",
+      "index": 5,
+      "order": 19,
+      "name": "Tala Gate",
+      "theme": "sky",
+      "obstacle": "crystal",
+      "seed": 151461,
+      "length": 35,
+      "speed": 100,
+      "spacing": 104,
+      "gapStart": 80,
+      "gapEnd": 68,
+      "moveAmp": 22,
+      "moveChance": 0.8,
+      "hazardChance": 0.45999999999999996,
+      "wind": 140,
+      "gems": 7,
+      "objective": {
+        "type": "finish",
+        "target": 35,
+        "label": "Pass all 35 obstacles"
+      },
+      "bonus": [
+        {
+          "type": "allGems",
+          "label": "Collect all 7 gems"
+        },
+        {
+          "type": "maxFlaps",
+          "target": 92,
+          "label": "Finish using 92 flaps or fewer"
+        }
+      ],
+      "reward": 182,
+      "bonusReward": 15,
+      "masteryItem": "PK104"
+    }
+  ]
+}

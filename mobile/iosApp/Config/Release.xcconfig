@@ -1,0 +1,3 @@
+// Backend for Release builds: must be https. Leave empty for an offline-only build.
+PAKPAK_API_BASE_URL = https:/$()/pakpak.example.com
+PAKPAK_TEAM_ID =

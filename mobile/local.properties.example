@@ -1,0 +1,10 @@
+# mobile/local.properties (git-ignored). Android Studio writes sdk.dir for you.
+sdk.dir=C\:/Users/YOU/AppData/Local/Android/Sdk
+
+# Backend for DEBUG builds. Examples:
+#   emulator talking to a server on your PC:   http://10.0.2.2:8080
+#   physical phone on the same Wi-Fi:          http://192.168.1.23:8080   (start the server with HOST=0.0.0.0)
+pakpak.apiBaseUrl.debug=http://10.0.2.2:8080
+
+# Backend for RELEASE builds. Must be https:// (the build fails otherwise). Leave empty for an offline-only build.
+pakpak.apiBaseUrl.release=https://pakpak.example.com

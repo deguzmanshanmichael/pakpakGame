@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PakPak Admin</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <header>
+    <h1>PakPak Admin</h1>
+    <span id="who"></span>
+    <button id="logout" hidden>Log out</button>
+  </header>
+
+  <section id="login-view">
+    <form id="login-form" class="card narrow">
+      <h2>Admin sign in</h2>
+      <label>Username <input name="username" autocomplete="username" required></label>
+      <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit">Sign in</button>
+      <p class="error" id="login-error"></p>
+    </form>
+  </section>
+
+  <section id="app-view" hidden>
+    <nav id="tabs">
+      <button data-tab="overview" class="active">Overview</button>
+      <button data-tab="redemptions">Redemptions</button>
+      <button data-tab="reports">Reports</button>
+      <button data-tab="trades">Flagged trades</button>
+      <button data-tab="runs">Flagged runs</button>
+      <button data-tab="collectibles">Collectibles</button>
+      <button data-tab="config">Drop rates &amp; config</button>
+      <button data-tab="notice">Completion notice</button>
+      <button data-tab="users">Users</button>
+      <button data-tab="audit">Audit log</button>
+    </nav>
+    <p class="error" id="app-error"></p>
+    <main id="content"></main>
+  </section>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

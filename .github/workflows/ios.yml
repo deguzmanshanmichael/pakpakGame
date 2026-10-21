@@ -1,0 +1,73 @@
+# Builds the iOS app on GitHub's macOS machines (Apple only allows iOS builds on a Mac).
+# Outputs (Actions > this run > Artifacts):
+#   PakPak-simulator  - PakPak.app for the iOS Simulator on any Mac (drag onto a running simulator)
+#   PakPak-unsigned   - PakPak-unsigned.ipa for a real iPhone; sign it with your Apple ID using a
+#                       sideloading tool (e.g. Sideloadly/AltStore), or use the TestFlight route in docs/IOS.md
+name: iOS
+
+on:
+  push:
+    paths: ["mobile/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+  workflow_call: # used by release.yml
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: mobile/iosApp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Cache Kotlin/Native toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('mobile/**/*.gradle.kts', 'mobile/gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project PakPak.xcodeproj -scheme PakPak -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/sim CODE_SIGNING_ALLOWED=NO build 2>&1 | tail -n 120
+
+      - name: Build unsigned device app (.ipa)
+        env:
+          API_URL: ${{ vars.PAKPAK_API_BASE_URL }}
+        run: |
+          set -o pipefail
+          EXTRA=""
+          if [ -n "$API_URL" ]; then EXTRA="PAKPAK_API_BASE_URL=$API_URL"; fi
+          xcodebuild -project PakPak.xcodeproj -scheme PakPak -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build/device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" $EXTRA build 2>&1 | tail -n 120
+          mkdir -p out/Payload
+          cp -R build/device/Build/Products/Release-iphoneos/PakPak.app out/Payload/
+          (cd out && zip -qry PakPak-unsigned.ipa Payload)
+          (cd build/sim/Build/Products/Debug-iphonesimulator && zip -qry "$GITHUB_WORKSPACE/mobile/iosApp/out/PakPak-simulator.zip" PakPak.app)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PakPak-unsigned
+          path: mobile/iosApp/out/PakPak-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PakPak-simulator
+          path: mobile/iosApp/out/PakPak-simulator.zip

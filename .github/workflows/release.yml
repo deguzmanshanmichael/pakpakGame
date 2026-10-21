@@ -1,0 +1,91 @@
+# Builds both apps and publishes them as a GitHub Release. The download page links to
+# releases/latest/download/PakPak.apk and PakPak-iOS-unsigned.ipa, so it updates by itself.
+#
+# Release a version:   git tag v1.1.0 && git push origin v1.1.0
+#
+# Android signing (recommended, so updates install over each other): add repository secrets
+#   ANDROID_KEYSTORE_BASE64   base64 of your .jks   (PowerShell: [Convert]::ToBase64String([IO.File]::ReadAllBytes("pakpak-release.jks")))
+#   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+# Without them the release contains a debug-signed APK (installable, but meant for testing).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      HAS_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up signing key
+        if: env.HAS_KEY == 'true'
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > release.jks
+          printf 'storeFile=release.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "$STORE_PW" "$KEY_ALIAS" "$KEY_PW" > keystore.properties
+
+      - name: Build APK
+        env:
+          API_URL: ${{ vars.PAKPAK_API_BASE_URL }}
+        run: |
+          if [ "$HAS_KEY" = "true" ]; then
+            bash ./gradlew :androidApp:assembleRelease -Ppakpak.apiBaseUrl.release="$API_URL"
+            cp dist/PakPak-release.apk PakPak.apk
+          else
+            echo "::warning::No signing key secrets set; publishing a debug-signed APK."
+            bash ./gradlew :androidApp:assembleDebug -Ppakpak.apiBaseUrl.debug="$API_URL"
+            cp dist/PakPak-debug.apk PakPak.apk
+          fi
+          rm -f release.jks keystore.properties
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PakPak-apk
+          path: mobile/PakPak.apk
+
+  ios:
+    uses: ./.github/workflows/ios.yml
+
+  publish:
+    needs: [android, ios]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dl
+      - name: Collect files
+        run: |
+          mkdir out
+          cp dl/PakPak-apk/PakPak.apk out/PakPak.apk
+          cp dl/PakPak-unsigned/PakPak-unsigned.ipa out/PakPak-iOS-unsigned.ipa
+          (cd out && sha256sum * > SHA256SUMS.txt)
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
+          name: PakPak ${{ github.ref_type == 'tag' && github.ref_name || format('build {0}', github.run_number) }}
+          generate_release_notes: true
+          files: |
+            out/PakPak.apk
+            out/PakPak-iOS-unsigned.ipa
+            out/SHA256SUMS.txt

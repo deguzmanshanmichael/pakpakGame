@@ -1,5 +1,8 @@
 package com.shan.pakpak.json
 
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
+
 /**
  * A small multiplatform JSON implementation with the same API shape as org.json
  * (which only exists on Android), so game code reads the same on every platform.
@@ -47,7 +50,9 @@ class JSONObject() {
     override fun toString(): String = StringBuilder().also { write(this, it) }.toString()
 
     companion object {
-        /** Explicit JSON null (distinct from a missing key). */
+        /** Explicit JSON null (distinct from a missing key). Hidden from Objective-C, where NULL is a macro. */
+        @OptIn(ExperimentalObjCRefinement::class)
+        @HiddenFromObjC
         val NULL: Any = object { override fun toString() = "null" }
     }
 }

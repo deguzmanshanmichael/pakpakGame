@@ -29,9 +29,14 @@ import platform.Foundation.NSURLSession
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.create
+import platform.Foundation.dataTaskWithRequest
 import platform.Foundation.dataUsingEncoding
 import platform.Foundation.dateWithTimeIntervalSince1970
+import platform.Foundation.setHTTPBody
+import platform.Foundation.setHTTPMethod
+import platform.Foundation.setValue
 import platform.Foundation.stringWithContentsOfFile
+import platform.Foundation.timeIntervalSince1970
 import platform.Foundation.writeToFile
 import platform.Network.nw_path_get_status
 import platform.Network.nw_path_monitor_cancel

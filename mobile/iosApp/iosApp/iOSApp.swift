@@ -5,7 +5,7 @@ import shared
 struct PakPakApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
-    var body: some Scene {
+    var body: some SwiftUI.Scene {
         WindowGroup {
             GameView()
                 .ignoresSafeArea()

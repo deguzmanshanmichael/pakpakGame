@@ -75,5 +75,10 @@
       $("btn-apk").removeAttribute("href");
       $("btn-apk").textContent = "Coming soon";
       $("btn-apk").classList.add("btn-disabled");
+      if (!cfg.testflightUrl && !cfg.appStoreUrl) {
+        iosBtn.removeAttribute("href");
+        iosBtn.textContent = "Coming soon";
+        iosBtn.classList.add("btn-disabled");
+      }
     });
 })();

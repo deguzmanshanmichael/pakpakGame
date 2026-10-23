@@ -16,9 +16,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AndroidPlatform.init(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        hideSystemBars()
         val config = PlatformConfig(BuildConfig.API_BASE_URL, BuildConfig.VERSION_NAME, "Android")
         setContent { PakPakApp(config) }
+        // Must run after setContent: before that the window has no decor view (crashes on Android 11+).
+        hideSystemBars()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (!G.initialized || !G.back()) moveTaskToBack(true)
@@ -46,7 +47,8 @@ class MainActivity : ComponentActivity() {
     private fun hideSystemBars() {
         if (Build.VERSION.SDK_INT >= 30) {
             window.setDecorFitsSystemWindows(false)
-            window.insetsController?.let {
+            // Going through decorView guarantees the decor exists before asking for its controller.
+            window.decorView.windowInsetsController?.let {
                 it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }

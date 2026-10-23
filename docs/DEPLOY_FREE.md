@@ -43,6 +43,15 @@ DATABASE_URL="libsql://..." DATABASE_AUTH_TOKEN="..." npm run create-admin -- sh
 
 Then open `https://<your-service>.onrender.com/admin/` and sign in. On Windows PowerShell, set the variables first: `$env:DATABASE_URL="..."; $env:DATABASE_AUTH_TOKEN="..."; npm run create-admin -- shan`
 
+### Tester kit for the admin account
+To test the live app with everything unlocked (9,999,999 coins, 99,999 wish tokens, every skin, every megabird and one of every collectible), run this with the same two variables set:
+
+```bash
+npm run grant-tester -- shan
+```
+
+It only works on admin accounts, only adds what's missing (safe to run again) and is recorded in the audit log. Kit collectibles are untradeable so they stay out of the player economy; add `--tradeable` if you want to test trading with them.
+
 ## Notes
 - **Updates:** every push to `main` redeploys the server automatically (`autoDeploy: true`).
 - **Rate limits** are kept in memory, so they reset when the free server sleeps. That's fine at this size.

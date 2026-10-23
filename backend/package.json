@@ -12,7 +12,8 @@
     "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env --watch src/server.js",
     "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\"",
     "create-admin": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/create-admin.js",
-    "sync-catalog": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/sync-catalog.js"
+    "sync-catalog": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/sync-catalog.js",
+    "grant-tester": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/grant-tester.js"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0"

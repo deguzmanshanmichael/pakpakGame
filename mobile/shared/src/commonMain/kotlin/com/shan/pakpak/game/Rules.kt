@@ -48,9 +48,10 @@ object Rules {
     }
 
     /** Local (guest/offline) capsule roll. Falls back to a more common rarity if a pool is empty. */
-    fun rollCapsule(catalog: Catalog, d: DropConfig, pipeIndex: Int, rnd: Random): Item? {
-        val r = pickRarity(weights(d, pipeIndex), rnd.nextDouble())
-        for (idx in r.ordinal downTo 0) {
+    fun rollCapsule(catalog: Catalog, d: DropConfig, pipeIndex: Int, rnd: Random, minRarity: Rarity = Rarity.COMMON): Item? {
+        // A Rare+ capsule keeps the normal relative odds between Rare and rarer; only lower tiers are removed.
+        val r = pickRarity(weights(d, pipeIndex).filter { it.first.ordinal >= minRarity.ordinal }, rnd.nextDouble())
+        for (idx in r.ordinal downTo minRarity.ordinal) {
             val pool = catalog.pool(Rarity.entries[idx])
             if (pool.isNotEmpty()) return pool[rnd.nextInt(pool.size)]
         }

@@ -21,6 +21,7 @@ function parseRun(raw, data) {
     playedAt: v.int(raw.playedAt, 'playedAt', { min: 1_600_000_000_000, max: 4_000_000_000_000 }),
     claimedComplete: raw.completed === true,
     pickups: Array.isArray(raw.pickups) ? raw.pickups : [],
+    megabird: raw.megabird == null || raw.megabird === '' ? null : v.str(raw.megabird, 'megabird', { max: 32, pattern: /^[a-z0-9_]+$/ }),
   };
   if (run.pickups.length > 500 || !run.pickups.every((p) => Number.isInteger(p) && p >= 0)) throw bad('invalid_pickups', 'pickups must be pipe indices');
   run.pickups = [...run.pickups].sort((a, b) => a - b);
@@ -118,6 +119,7 @@ export function playerRoutes(r, { db, data, limiter }) {
     const skinId = v.str(body.skinId, 'skinId', { max: 32 });
     const skin = data.cfg.skins.find((s) => s.id === skinId);
     if (!skin) throw notFound('Unknown skin');
+    if (skin.source === 'wish') throw forbidden('This skin can only be won from Hiling ni Tala');
     return db.tx(() => {
       if (skin.price === 0 || db.get('SELECT 1 FROM skins_owned WHERE user_id = ? AND skin_id = ?', user.id, skinId)) throw conflict('already_owned', 'You already own this skin');
       grantCoins(db, user.id, -skin.price, 'skin', skinId);

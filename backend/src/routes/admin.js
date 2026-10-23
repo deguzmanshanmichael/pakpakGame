@@ -43,7 +43,18 @@ function validateSection(key, value) {
       if (!Number.isInteger(value[f]) || value[f] <= 0) throw bad('invalid_config', `antiCheat.${f} must be a positive integer`);
     }
   }
-  if ((key === 'skins' || key === 'achievements') && !Array.isArray(value)) throw bad('invalid_config', `${key} must be a list`);
+  if ((key === 'skins' || key === 'achievements' || key === 'megabirds') && !Array.isArray(value)) throw bad('invalid_config', `${key} must be a list`);
+  if (key === 'wish') {
+    const rate = (x) => num(x) && x >= 0 && x <= 1;
+    const s5 = value.star5, s4 = value.star4, s3 = value.star3;
+    if (!Number.isInteger(value.tokenPrice) || value.tokenPrice < 1) throw bad('invalid_config', 'wish.tokenPrice must be a positive integer');
+    if (!s5 || !rate(s5.base) || !rate(s5.softStep) || !rate(s5.featuredChance) || !Number.isInteger(s5.hardPity) || s5.hardPity < 1 || !Number.isInteger(s5.softStart) || s5.softStart > s5.hardPity) {
+      throw bad('invalid_config', 'wish.star5 needs base/softStep/featuredChance in 0-1 and softStart <= hardPity');
+    }
+    if (!s4 || !rate(s4.base) || !rate(s4.softBonus) || !rate(s4.skinShare) || !Number.isInteger(s4.hardPity) || s4.hardPity < 1) throw bad('invalid_config', 'wish.star4 is invalid');
+    if (!s3 || !rate(s3.coinShare) || !Array.isArray(s3.coins) || !s3.coins.length) throw bad('invalid_config', 'wish.star3 is invalid');
+    if (typeof value.featured !== 'string') throw bad('invalid_config', 'wish.featured must be a megabird id');
+  }
 }
 
 export function adminRoutes(r, { db, data }) {

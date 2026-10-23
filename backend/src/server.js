@@ -11,6 +11,7 @@ import { playerRoutes } from './routes/player.js';
 import { socialRoutes } from './routes/social.js';
 import { tradeRoutes } from './routes/trades.js';
 import { adminRoutes } from './routes/admin.js';
+import { wishRoutes } from './routes/wish.js';
 
 const PUBLIC_DIR = resolve(join(dirname(fileURLToPath(import.meta.url)), '..', 'public'));
 
@@ -27,6 +28,7 @@ export function createApp(overrides = {}) {
   socialRoutes(router, ctx);
   tradeRoutes(router, ctx);
   adminRoutes(router, ctx);
+  wishRoutes(router, ctx);
   const sweeper = setInterval(() => {
     limiter.sweep();
     db.run('DELETE FROM sessions WHERE expires_at < ?', Date.now());

@@ -98,6 +98,10 @@ class ScreenshotTest {
         shoot("rewards", 216, 480, RewardsScene())
         shoot("profile", 216, 480, ProfileScene())
         shoot("settings", 216, 480, SettingsScene())
+        p.tokens = 12; p.pity5 = 143; p.pity4 = 6; p.megabirds.add("haribon"); p.megabirds.add("kidlat")
+        shoot("wish", 216, 480, com.shan.pakpak.scenes.WishScene())
+        shoot("megabirds", 216, 480, com.shan.pakpak.scenes.MegabirdScene())
+        shoot("menu_mega", 216, 480, MenuScene().also { p.selectedMegabird = "haribon" })
 
         val endless = PlayScene.endless()
         shoot("play_ready", 216, 480, endless)
@@ -109,6 +113,16 @@ class ScreenshotTest {
         // Fly into the ground to get the results screen.
         repeat(60 * 4) { G.frame(1f / 60f, g) }
         save(b, "results_endless")
+
+        // Haribon run with shields, then a world change mid-crossfade (score 30).
+        val megaRun = PlayScene.endless()
+        G.scenes.reset(megaRun); frames(g, 30)
+        steer(g, megaRun, 60 * 8) { it.score >= 5 }
+        save(b, "play_haribon")
+        steer(g, megaRun, 60 * 60) { it.score >= 30 }
+        repeat(50) { G.frame(1f / 60f, g) }
+        save(b, "play_world_change")
+        p.selectedMegabird = ""
 
         for (id in listOf("2-2", "3-3", "4-2")) {
             val l = G.levels.byId[id]!!

@@ -181,7 +181,7 @@ object Backgrounds {
     fun drawSky(g: Gfx, t: Theme, scroll: Float, time: Float, groundH: Int, alpha: Int = 255) {
         val s = set(t, g.w, g.h, groundH)
         val skyH = g.h - groundH
-        g.bitmapRegion(s.sky, 0, 0, 1, skyH, 0, 0, g.w, skyH)
+        g.bitmapRegion(s.sky, 0, 0, 1, skyH, 0, 0, g.w, skyH, alpha = alpha)
         tile(g, s.far, scroll * 0.12f, alpha)
         if (t == Theme.SKY) {
             // twinkling stars
@@ -189,18 +189,18 @@ object Backgrounds {
             repeat(10) {
                 val x = rnd.nextInt(g.w)
                 val y = rnd.nextInt((skyH * 0.6f).toInt().coerceAtLeast(1))
-                if (sin(time * 3 + it) > 0.6) g.rect(x, y, 1, 1, Color.WHITE)
+                if (sin(time * 3 + it) > 0.6) g.rect(x, y, 1, 1, g.alpha(Color.WHITE, alpha / 255f))
             }
         }
         tile(g, s.near, scroll * 0.35f, alpha)
     }
 
-    fun drawGround(g: Gfx, t: Theme, scroll: Float, groundH: Int) {
+    fun drawGround(g: Gfx, t: Theme, scroll: Float, groundH: Int, alpha: Int = 255) {
         val s = set(t, g.w, g.h, groundH)
         val y = g.h - groundH
         val off = (scroll % GROUND_TILE).toInt()
         var x = -off
-        while (x < g.w) { g.bitmap(s.ground, x, y); x += GROUND_TILE }
+        while (x < g.w) { g.bitmap(s.ground, x, y, 1, alpha); x += GROUND_TILE }
     }
 
     private fun tile(g: Gfx, b: ImageBitmap, scroll: Float, alpha: Int) {

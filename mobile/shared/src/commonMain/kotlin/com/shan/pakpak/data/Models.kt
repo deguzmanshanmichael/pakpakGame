@@ -117,7 +117,27 @@ class Levels(val levels: List<Level>, val chapters: List<Pair<Int, String>>) {
     }
 }
 
-class Skin(val id: String, val name: String, val price: Int, val colors: IntArray)
+class Skin(val id: String, val name: String, val price: Int, val colors: IntArray, val source: String = "shop") {
+    val wishOnly get() = source == "wish"
+}
+
+/** A bird with a power. Megabirds are won from Hiling ni Tala and can only be flown in Endless. */
+class Megabird(
+    val id: String, val name: String, val power: String, val params: Map<String, Double>,
+    val powerName: String, val desc: String, val colors: IntArray, val aura: Int,
+) {
+    fun param(key: String, fallback: Double) = params[key] ?: fallback
+    /** Megabirds reuse the skin renderer with their own palette. */
+    val skin: Skin by lazy { Skin("mega:$id", name, 0, colors, "megabird") }
+}
+
+class WishConfig(
+    val name: String, val tokenName: String, val tokenPrice: Int, val featured: String,
+    val base5: Double, val softStart: Int, val softStep: Double, val hardPity5: Int, val featuredChance: Double,
+    val base4: Double, val softAt4: Int, val softBonus4: Double, val hardPity4: Int, val skinShare: Double,
+    val coinShare: Double, val coinPrizes: List<Pair<Int, Int>>,
+    val duplicateMegabirdCoins: Int, val duplicateSkinCoins: Int,
+)
 class Achievement(val id: String, val name: String, val desc: String, val type: String, val value: String, val reward: Int)
 class Notice(val title: String, val body: String, val eligibility: String, val process: String, val contact: String)
 
@@ -141,7 +161,11 @@ class GameConfig(
     val achievements: List<Achievement>,
     val notice: Notice,
     val minMsPerPipe: Int,
+    val megabirds: List<Megabird>,
+    val wish: WishConfig,
 ) {
+    fun megabird(id: String?) = megabirds.firstOrNull { it.id == id }
+
     companion object {
         fun parse(o: JSONObject): GameConfig {
             val d = o.getJSONObject("drops")
@@ -168,7 +192,7 @@ class GameConfig(
             val skins = (0 until sk.length()).map { i ->
                 val s = sk.getJSONObject(i)
                 val c = s.getJSONArray("colors")
-                Skin(s.getString("id"), s.getString("name"), s.getInt("price"), IntArray(c.length()) { Color.parseColor(c.getString(it)) })
+                Skin(s.getString("id"), s.getString("name"), s.getInt("price"), IntArray(c.length()) { Color.parseColor(c.getString(it)) }, s.optString("source", "shop"))
             }
             val ac = o.getJSONArray("achievements")
             val achievements = (0 until ac.length()).map { i ->
@@ -178,8 +202,34 @@ class GameConfig(
             val n = o.getJSONObject("notice")
             val notice = Notice(n.getString("title"), n.getString("body"), n.optString("eligibility"), n.optString("process"), n.optString("contact"))
             val minMs = o.optJSONObject("antiCheat")?.optInt("minMsPerPipe", 700) ?: 700
+            val mb = o.optJSONArray("megabirds")
+            val megabirds = if (mb == null) emptyList() else (0 until mb.length()).map { i ->
+                val b = mb.getJSONObject(i)
+                val c = b.getJSONArray("colors")
+                val p = b.optJSONObject("params")
+                val params = HashMap<String, Double>()
+                if (p != null) for (k in p.keys()) params[k] = p.optDouble(k, 0.0)
+                Megabird(b.getString("id"), b.getString("name"), b.getString("power"), params, b.optString("powerName"), b.optString("desc"),
+                    IntArray(c.length()) { Color.parseColor(c.getString(it)) }, Color.parseColor(b.optString("aura", "#ffd23f")))
+            }
+            val wj = o.optJSONObject("wish") ?: JSONObject()
+            val s5 = wj.optJSONObject("star5") ?: JSONObject()
+            val s4 = wj.optJSONObject("star4") ?: JSONObject()
+            val s3 = wj.optJSONObject("star3") ?: JSONObject()
+            val coinArr = s3.optJSONArray("coins")
+            val wish = WishConfig(
+                name = wj.optString("name", "Hiling ni Tala"), tokenName = wj.optString("tokenName", "Bituin Token"),
+                tokenPrice = wj.optInt("tokenPrice", 150), featured = wj.optString("featured", megabirds.firstOrNull()?.id ?: ""),
+                base5 = s5.optDouble("base", 0.005), softStart = s5.optInt("softStart", 151), softStep = s5.optDouble("softStep", 0.02),
+                hardPity5 = s5.optInt("hardPity", 200), featuredChance = s5.optDouble("featuredChance", 0.5),
+                base4 = s4.optDouble("base", 0.05), softAt4 = s4.optInt("softAt", 9), softBonus4 = s4.optDouble("softBonus", 0.5),
+                hardPity4 = s4.optInt("hardPity", 10), skinShare = s4.optDouble("skinShare", 0.5),
+                coinShare = s3.optDouble("coinShare", 0.5),
+                coinPrizes = if (coinArr == null) listOf(50 to 1) else (0 until coinArr.length()).map { coinArr.getJSONArray(it).let { a -> a.getInt(0) to a.getInt(1) } },
+                duplicateMegabirdCoins = wj.optInt("duplicateMegabirdCoins", 1500), duplicateSkinCoins = wj.optInt("duplicateSkinCoins", 300),
+            )
             return GameConfig(o, drops, economy, intArrayOf(m.getInt("bronze"), m.getInt("silver"), m.getInt("gold"), m.getInt("platinum")),
-                skins, achievements, notice, minMs)
+                skins, achievements, notice, minMs, megabirds, wish)
         }
     }
 }

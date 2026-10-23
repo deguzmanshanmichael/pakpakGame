@@ -7,7 +7,7 @@ const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'data');
 const readJson = (name) => JSON.parse(readFileSync(join(DATA_DIR, name), 'utf8'));
 
 // Config sections an admin may override. Each override replaces the whole section.
-export const EDITABLE_SECTIONS = ['drops', 'economy', 'medals', 'antiCheat', 'notice', 'skins', 'achievements'];
+export const EDITABLE_SECTIONS = ['drops', 'economy', 'medals', 'antiCheat', 'notice', 'skins', 'achievements', 'wish', 'megabirds'];
 
 export class GameData {
   constructor(db) {
@@ -73,8 +73,8 @@ export class GameData {
   }
 
   publicConfig() {
-    const { drops, economy, medals, notice, skins, achievements, antiCheat } = this.cfg;
-    return { drops, economy, medals, notice, skins, achievements, antiCheat: { minMsPerPipe: antiCheat.minMsPerPipe }, catalogVersion: this.catalogVersion };
+    const { drops, economy, medals, notice, skins, achievements, antiCheat, wish, megabirds } = this.cfg;
+    return { drops, economy, medals, notice, skins, achievements, wish, megabirds, antiCheat: { minMsPerPipe: antiCheat.minMsPerPipe }, catalogVersion: this.catalogVersion };
   }
 
   setSection(key, value, actorId) {

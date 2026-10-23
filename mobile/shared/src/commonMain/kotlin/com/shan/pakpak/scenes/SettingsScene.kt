@@ -23,6 +23,7 @@ class SettingsScene : UiScene("Settings") {
         if (sfx != s.sfx || sv != s.sfxVolume) { s.sfx = sfx; s.sfxVolume = sv; G.audio.play("coin") }
         g.text("Other", x, cy, Pal.ORANGE_DARK); cy += 14
         s.haptics = ui.toggle(x, cy, w, "Vibration on tap", s.haptics); cy += 18
+        s.screenShake = ui.toggle(x, cy, w, "Screen shake", s.screenShake); cy += 18
         s.showFps = ui.toggle(x, cy, w, "Show frame time", s.showFps); cy += 24
 
         g.text("About", x, cy, Pal.ORANGE_DARK); cy += 12

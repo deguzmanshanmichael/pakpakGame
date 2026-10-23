@@ -91,7 +91,7 @@ In production the server refuses to start if `SERVER_SECRET` is the placeholder.
 | Area | Details |
 |---|---|
 | Core gameplay | Tap to flap, gravity, fixed 120 Hz physics, circle-vs-rect collision, scoring, pause/resume (including auto-pause when the app is backgrounded), difficulty ramp, death and results flow |
-| Endless | Procedural obstacles, theme changes every 30 points across 4 themes, coins, mystery capsules, distance, best score, Bronze/Silver/Gold/Platinum medals at 10/25/50/100 |
+| Endless | Procedural obstacles, smooth world crossfades every 30 points across 4 themes (with wider "breather" gaps after each change), coins, mystery capsules, distance, best score, Bronze/Silver/Gold/Platinum medals at 10/25/50/100 |
 | Adventure | 4 chapters × 5 levels; finish, collect-gems and survive objectives; moving obstacles, spike orbs and wind; 3 stars per level (clear, all gems, flap budget); locked, unlocked, completed and mastered states; replays; first-clear and bonus rewards; mastery items |
 | Collectibles | 133 designs (50/30/20/15/10/5/3), all original procedural pixel art; collection book with per-rarity progress and duplicate counts; transparent odds page; configurable weights; depth bonus; no pity timer; optional global supply caps |
 | Completion | Progress page, confetti, the Taglish notice (editable from the backend), eligibility and process text, claim submission and status tracking |
@@ -101,6 +101,8 @@ In production the server refuses to start if `SERVER_SECRET` is the placeholder.
 | Messaging | Friends-only 1:1 chat, timestamps, history, unread badges, sent/delivered/read status, in-app notification banner, rate limits, automatic masking of phone numbers, emails and links |
 | Trading | Friends only, tradeable items only, both sides must offer something, both parties confirm a final summary, atomic execution that rechecks ownership, cancel and decline, history, suspicious-trade flags |
 | Economy | Virtual Pak Coins only, daily caps, idempotent ledger, cosmetic skin shop with no gameplay advantage, no real-money purchases |
+| Megabirds & Tala Wish | 6 megabirds with powers (shield, revive, magnet, lightning, light wings, double coins), Endless-only and kept off medals/leaderboard; Hiling ni Tala gacha wish with 150-coin tokens, 200-pull hard pity, soft pity, 4★ every 10, 50/50 featured guarantee, published odds, server-side rolls |
+| Skins | 17 skins: 12 from the coin shop, 5 exclusive to Tala Wish |
 | Admin | Web panel: redemptions (verify, reject or mark fulfilled, with a required reason), reports, flagged trades and runs, collectible editor (tradeable, drop pool, max supply), JSON config editor, notice editor, user suspend and flag, audit log |
 | App polish | Launcher plus adaptive icon, Android 12+ splash, chiptune music and 11 sound effects with settings, particles, fades, screen shake, haptics, atomic saves with backup recovery |
 

@@ -31,6 +31,7 @@ class RunRecord(
     val playedAt: Long,
     val completed: Boolean,
     val pickups: List<Int>,
+    val megabird: String? = null,
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
         put("clientRunId", clientRunId); put("ticketId", ticketId ?: JSONObject.NULL); put("mode", mode)
@@ -38,6 +39,7 @@ class RunRecord(
         put("score", score); put("pipes", pipes); put("gems", gems); put("coinsCollected", coinsCollected)
         put("flaps", flaps); put("durationMs", durationMs); put("distance", distance); put("playedAt", playedAt)
         put("completed", completed); put("pickups", JSONArray(pickups))
+        if (megabird != null) put("megabird", megabird)
     }
 
     companion object {
@@ -46,7 +48,19 @@ class RunRecord(
             o.getString("mode"), o.optString("levelId").ifEmpty { null }, o.getInt("score"), o.getInt("pipes"), o.optInt("gems"),
             o.optInt("coinsCollected"), o.optInt("flaps"), o.getLong("durationMs"), o.optInt("distance"), o.getLong("playedAt"),
             o.optBoolean("completed"), o.optJSONArray("pickups")?.let { a -> (0 until a.length()).map { a.getInt(it) } } ?: emptyList(),
+            o.optString("megabird").ifEmpty { null },
         )
+    }
+}
+
+/** One prize from Hiling ni Tala, kept for the player's wish history. */
+class WishEntry(val tier: Int, val type: String, val id: String?, val name: String, val amount: Int, val duplicate: Boolean, val featured: Boolean, val pity: Int) {
+    fun toJson(): JSONObject = JSONObject().put("tier", tier).put("type", type).put("id", id ?: "").put("name", name).put("amount", amount)
+        .put("duplicate", duplicate).put("featured", featured).put("pity", pity)
+
+    companion object {
+        fun fromJson(o: JSONObject) = WishEntry(o.optInt("tier", 3), o.optString("type"), o.optString("id").ifEmpty { null }, o.optString("name"),
+            o.optInt("amount"), o.optBoolean("duplicate"), o.optBoolean("featured"), o.optInt("pity"))
     }
 }
 
@@ -93,6 +107,17 @@ class Profile(val kind: String) {
     var redemptionReason: String? = null
     var lastSync = 0L
     var guestImportOffered = false
+    // Megabirds and Hiling ni Tala
+    val megabirds = HashSet<String>()
+    /** Megabird used for the next Endless run, or "" for the Classic bird. */
+    var selectedMegabird = ""
+    var bestScoreMega = 0
+    var tokens = 0
+    var pity5 = 0
+    var pity4 = 0
+    var guaranteedFeatured = false
+    var totalPulls = 0
+    val wishHistory = ArrayList<WishEntry>()
 
     val distinctOwned get() = items.count { it.value > 0 }
     fun owns(id: String) = (items[id] ?: 0) > 0
@@ -114,6 +139,9 @@ class Profile(val kind: String) {
         put("profileVisibility", profileVisibility); put("friendRequests", friendRequests); put("guestImported", guestImported)
         put("redemptionStatus", redemptionStatus ?: JSONObject.NULL); put("redemptionReason", redemptionReason ?: JSONObject.NULL)
         put("lastSync", lastSync); put("guestImportOffered", guestImportOffered)
+        put("megabirds", JSONArray(megabirds.toList())); put("selectedMegabird", selectedMegabird); put("bestScoreMega", bestScoreMega)
+        put("tokens", tokens); put("pity5", pity5); put("pity4", pity4); put("guaranteedFeatured", guaranteedFeatured); put("totalPulls", totalPulls)
+        put("wishHistory", JSONArray(wishHistory.takeLast(60).map { it.toJson() }))
     }
 
     companion object {
@@ -146,6 +174,11 @@ class Profile(val kind: String) {
             p.redemptionStatus = if (o.isNull("redemptionStatus")) null else o.optString("redemptionStatus").ifEmpty { null }
             p.redemptionReason = if (o.isNull("redemptionReason")) null else o.optString("redemptionReason").ifEmpty { null }
             p.lastSync = o.optLong("lastSync"); p.guestImportOffered = o.optBoolean("guestImportOffered")
+            o.optJSONArray("megabirds")?.let { a -> for (i in 0 until a.length()) p.megabirds.add(a.getString(i)) }
+            p.selectedMegabird = o.optString("selectedMegabird"); p.bestScoreMega = o.optInt("bestScoreMega")
+            p.tokens = o.optInt("tokens"); p.pity5 = o.optInt("pity5"); p.pity4 = o.optInt("pity4")
+            p.guaranteedFeatured = o.optBoolean("guaranteedFeatured"); p.totalPulls = o.optInt("totalPulls")
+            o.optJSONArray("wishHistory")?.let { a -> for (i in 0 until a.length()) runCatching { p.wishHistory.add(WishEntry.fromJson(a.getJSONObject(i))) } }
             return p
         }
     }
@@ -161,7 +194,7 @@ class Profile(val kind: String) {
         val st = s.getJSONObject("stats")
         bestScore = st.getInt("bestScore"); bestScoreVerified = st.getInt("bestScoreVerified"); totalRuns = st.getInt("totalRuns")
         totalPipes = st.getInt("totalPipes"); totalDistance = st.getLong("totalDistance"); totalFlaps = st.getLong("totalFlaps")
-        tradesCompleted = st.optInt("tradesCompleted"); friends = st.optInt("friends")
+        tradesCompleted = st.optInt("tradesCompleted"); friends = st.optInt("friends"); bestScoreMega = st.optInt("bestScoreMega")
         val m = st.getJSONObject("medals")
         medals[0] = m.getInt("bronze"); medals[1] = m.getInt("silver"); medals[2] = m.getInt("gold"); medals[3] = m.getInt("platinum")
         val col = s.getJSONObject("collection")
@@ -186,6 +219,12 @@ class Profile(val kind: String) {
         skins.clear()
         val sk = s.getJSONArray("skins")
         for (i in 0 until sk.length()) skins.add(sk.getString(i))
+        s.optJSONArray("megabirds")?.let { a -> megabirds.clear(); for (i in 0 until a.length()) megabirds.add(a.getString(i)) }
+        if (selectedMegabird.isNotEmpty() && selectedMegabird !in megabirds) selectedMegabird = ""
+        s.optJSONObject("wish")?.let { w ->
+            tokens = w.optInt("tokens"); pity5 = w.optInt("pity5"); pity4 = w.optInt("pity4")
+            guaranteedFeatured = w.optBoolean("guaranteedFeatured"); totalPulls = w.optInt("totalPulls")
+        }
         val red = s.optJSONObject("redemption")
         redemptionStatus = red?.optString("status")
         redemptionReason = red?.let { if (it.isNull("decisionReason")) null else it.optString("decisionReason") }
@@ -201,9 +240,10 @@ class Settings {
     var sfxVolume = 8
     var haptics = true
     var showFps = false
+    var screenShake = true
 
     fun toJson() = JSONObject().put("music", music).put("sfx", sfx).put("musicVolume", musicVolume).put("sfxVolume", sfxVolume)
-        .put("haptics", haptics).put("showFps", showFps)
+        .put("haptics", haptics).put("showFps", showFps).put("screenShake", screenShake)
 
     companion object {
         fun fromJson(o: JSONObject?) = Settings().apply {
@@ -211,6 +251,7 @@ class Settings {
             music = o.optBoolean("music", true); sfx = o.optBoolean("sfx", true)
             musicVolume = o.optInt("musicVolume", 6).coerceIn(0, 10); sfxVolume = o.optInt("sfxVolume", 8).coerceIn(0, 10)
             haptics = o.optBoolean("haptics", true); showFps = o.optBoolean("showFps", false)
+            screenShake = o.optBoolean("screenShake", true)
         }
     }
 }

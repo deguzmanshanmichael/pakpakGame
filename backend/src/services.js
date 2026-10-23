@@ -38,11 +38,13 @@ export function issueCopy(db, data, userId, collectibleId, { source, bound = fal
 }
 
 // Rolls and issues a capsule. `u1` picks the rarity, `u2` picks the design.
-export function openCapsule(db, data, userId, pipeIndex, u1, u2, originRef) {
-  const weights = effectiveWeights(data.cfg.drops, pipeIndex);
+export function openCapsule(db, data, userId, pipeIndex, u1, u2, originRef, minRarity = 'common') {
+  // A "Rare+ capsule" keeps the normal relative odds between Rare and rarer; only lower tiers are removed.
+  const minIdx = RARITY_ORDER.indexOf(minRarity);
+  const weights = effectiveWeights(data.cfg.drops, pipeIndex).filter(([r]) => RARITY_ORDER.indexOf(r) >= minIdx);
   let rarity = pickRarity(weights, u1);
   // If a rarity's pool is empty or sold out, fall back to the next more common rarity.
-  for (let idx = RARITY_ORDER.indexOf(rarity); idx >= 0; idx--) {
+  for (let idx = RARITY_ORDER.indexOf(rarity); idx >= Math.max(0, minIdx); idx--) {
     const r = RARITY_ORDER[idx];
     const pool = (data.pool.get(r) ?? []).filter((id) => {
       const it = data.items.get(id);
@@ -96,13 +98,18 @@ export function processRun(db, data, user, run, now = Date.now()) {
 
   const recent = db.get('SELECT COUNT(*) AS n FROM runs WHERE user_id = ? AND received_at > ?', user.id, now - 3600_000).n;
   let check = recent >= cfg.antiCheat.maxRunsPerHour ? { ok: false, reason: 'too_many_runs' } : validateRun(run, { cfg, level, ticket, now });
+  const mega = run.megabird ? (cfg.megabirds ?? []).find((m) => m.id === run.megabird) : null;
+  if (check.ok && run.megabird) {
+    if (run.mode !== 'endless') check = { ok: false, reason: 'megabird_not_allowed' };
+    else if (!mega || !db.get('SELECT 1 FROM megabirds_owned WHERE user_id = ? AND megabird_id = ?', user.id, run.megabird)) check = { ok: false, reason: 'megabird_not_owned' };
+  }
 
   const insertRun = (result, extra) => db.run(`INSERT INTO runs (user_id, client_run_id, ticket_id, mode, level_id, score, pipes, gems,
-      coins_collected, flaps, duration_ms, completed, verified, medal, coins_awarded, capsules_awarded, flag_reason, result, played_at, received_at)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      coins_collected, flaps, duration_ms, completed, verified, medal, coins_awarded, capsules_awarded, flag_reason, result, played_at, received_at, megabird)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     user.id, run.clientRunId, run.ticketId ?? null, run.mode, run.levelId ?? null, run.score, run.pipes, run.gems, run.coinsCollected,
     run.flaps, run.durationMs, extra.completed ? 1 : 0, extra.verified ? 1 : 0, extra.medal ?? null, extra.coins ?? 0, extra.capsules ?? 0,
-    extra.flag ?? null, JSON.stringify(result), run.playedAt, now);
+    extra.flag ?? null, JSON.stringify(result), run.playedAt, now, run.megabird ?? null);
 
   if (!check.ok) {
     const result = { status: 'rejected', reason: check.reason, coins: 0, items: [], achievements: [] };
@@ -118,8 +125,10 @@ export function processRun(db, data, user, run, now = Date.now()) {
   let medal = null;
 
   if (run.mode === 'endless') {
-    medal = medalFor(run.score, cfg.medals);
-    const raw = run.coinsCollected + milestoneCoins(run.score, cfg.economy);
+    // Megabird runs earn coins and capsules but never medals, milestone items, Classic best or the leaderboard.
+    medal = mega ? null : medalFor(run.score, cfg.medals);
+    const coinMult = mega?.power === 'coins' ? (mega.params?.multiplier ?? 2) : 1;
+    const raw = run.coinsCollected * coinMult + milestoneCoins(run.score, cfg.economy);
     const room = Math.max(0, cfg.economy.dailyEndlessCoinCap - day.endless_coins);
     const coins = Math.min(raw, room);
     if (coins < raw) granted.notes.push('daily_coin_cap');
@@ -139,7 +148,8 @@ export function processRun(db, data, user, run, now = Date.now()) {
       coins, opened, user.id, day.day);
 
     const medalCol = medal ? `, medal_${medal} = medal_${medal} + 1` : '';
-    db.run(`UPDATE profiles SET best_score = MAX(best_score, ?),
+    if (mega) db.run('UPDATE profiles SET best_score_mega = MAX(best_score_mega, ?) WHERE user_id = ?', run.score, user.id);
+    else db.run(`UPDATE profiles SET best_score = MAX(best_score, ?),
               best_score_verified = CASE WHEN ? THEN MAX(best_score_verified, ?) ELSE best_score_verified END${medalCol}
             WHERE user_id = ?`, run.score, check.verified ? 1 : 0, run.score, user.id);
     if (medal) for (const m of MEDAL_ORDER.slice(0, MEDAL_ORDER.indexOf(medal) + 1)) grantMilestoneItem(db, data, user.id, `medal_${m}`, granted);
@@ -189,7 +199,7 @@ export function processRun(db, data, user, run, now = Date.now()) {
   granted.achievements = checkAchievements(db, data, user.id);
   for (const a of granted.achievements) granted.coins += a.reward;
 
-  const result = { status: 'accepted', verified: check.verified, completed: check.completed, medal, ...granted };
+  const result = { status: 'accepted', verified: check.verified && !mega, completed: check.completed, medal, megabird: mega?.id ?? null, ...granted };
   insertRun(result, { verified: check.verified, completed: check.completed, medal, coins: granted.coins, capsules: granted.items.length });
   return result;
 }
@@ -260,7 +270,7 @@ export function accountState(db, data, userId) {
     },
     stats: {
       bestScore: p.best_score, bestScoreVerified: p.best_score_verified, totalRuns: p.total_runs, totalPipes: p.total_pipes,
-      totalDistance: p.total_distance, totalFlaps: p.total_flaps, tradesCompleted: p.trades_completed,
+      totalDistance: p.total_distance, totalFlaps: p.total_flaps, tradesCompleted: p.trades_completed, bestScoreMega: p.best_score_mega,
       medals: { bronze: p.medal_bronze, silver: p.medal_silver, gold: p.medal_gold, platinum: p.medal_platinum },
       friends: db.get('SELECT COUNT(*) AS n FROM friendships WHERE user_a = ? OR user_b = ?', userId, userId).n,
     },
@@ -269,7 +279,19 @@ export function accountState(db, data, userId) {
       .map((r) => ({ ...r, bonusAllGems: !!r.bonusAllGems, bonusFlaps: !!r.bonusFlaps })),
     achievements: db.all('SELECT achievement_id AS id, unlocked_at AS unlockedAt FROM achievements_unlocked WHERE user_id = ?', userId),
     skins: ['pakpak', ...db.all('SELECT skin_id FROM skins_owned WHERE user_id = ?', userId).map((r) => r.skin_id)],
+    megabirds: db.all('SELECT megabird_id FROM megabirds_owned WHERE user_id = ?', userId).map((r) => r.megabird_id),
+    wish: wishStateView(db, userId),
     redemption: db.get('SELECT id, status, decision_reason AS decisionReason, created_at AS createdAt, decided_at AS decidedAt FROM redemption_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1', userId) ?? null,
     serverTime: Date.now(),
   };
+}
+
+export function wishStateRow(db, userId) {
+  db.run('INSERT OR IGNORE INTO wish_state (user_id, updated_at) VALUES (?, ?)', userId, Date.now());
+  return db.get('SELECT * FROM wish_state WHERE user_id = ?', userId);
+}
+
+export function wishStateView(db, userId) {
+  const w = db.get('SELECT * FROM wish_state WHERE user_id = ?', userId);
+  return { tokens: w?.tokens ?? 0, pity5: w?.pity5 ?? 0, pity4: w?.pity4 ?? 0, guaranteedFeatured: !!w?.guaranteed_featured, totalPulls: w?.total_pulls ?? 0 };
 }

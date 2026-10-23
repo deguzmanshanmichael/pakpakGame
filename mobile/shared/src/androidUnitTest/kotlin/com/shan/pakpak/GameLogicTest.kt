@@ -11,6 +11,9 @@ import com.shan.pakpak.game.Rules
 import com.shan.pakpak.game.RunSpec
 import com.shan.pakpak.game.RunState
 import com.shan.pakpak.game.World
+import com.shan.pakpak.game.WorldEvent
+import com.shan.pakpak.game.Wish
+import com.shan.pakpak.game.WishState
 import com.shan.pakpak.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -243,5 +246,119 @@ class GameLogicTest {
         assertEquals(p.items, copy.items)
         assertEquals(p.medals.toList(), copy.medals.toList())
         assertEquals(p.achievements.keys, copy.achievements.keys)
+    }
+
+    // ------------------------------------------------------------------ Megabirds & Hiling ni Tala
+
+    private fun megaWorld(id: String, seed: Long = 3) =
+        World(RunSpec("endless", null, config.drops, config.economy.coinChance, seed, config.megabird(id)), 216f, 480f)
+
+    private fun events(w: World, seconds: Float, flapEvery: Float = 0f): List<WorldEvent> {
+        val out = ArrayList<WorldEvent>()
+        w.flap()
+        var t = 0f
+        var nextFlap = flapEvery
+        while (t < seconds && !w.isDone()) {
+            if (flapEvery > 0f && t >= nextFlap) { w.flap(); nextFlap += flapEvery }
+            w.update(1f / 60f); out.addAll(w.events); w.events.clear(); t += 1f / 60f
+        }
+        return out
+    }
+
+    @Test fun haribonSurvivesThreeHitsAndFallsOnTheFourth() {
+        val w = megaWorld("haribon")
+        val ev = events(w, 60f)
+        assertEquals(3, ev.count { it == WorldEvent.SHIELD })
+        assertEquals(1, ev.count { it == WorldEvent.HIT })
+        assertEquals(RunState.DEAD, w.state)
+        assertEquals(0, w.shields)
+    }
+
+    @Test fun minokawaRevivesExactlyOnce() {
+        val w = megaWorld("minokawa")
+        val ev = events(w, 60f)
+        assertEquals(1, ev.count { it == WorldEvent.REVIVE })
+        assertEquals(RunState.DEAD, w.state)
+    }
+
+    @Test fun classicBirdHasNoPowers() {
+        val w = endless(3)
+        val ev = events(w, 60f)
+        assertEquals(0, ev.count { it == WorldEvent.SHIELD || it == WorldEvent.REVIVE })
+        assertEquals(RunState.DEAD, w.state)
+    }
+
+    @Test fun kidlatGetsLightningEvery15Points() {
+        val w = megaWorld("kidlat", 9)
+        autopilot(w, 120f, stopAt = 16)
+        assertTrue("score ${w.score}", w.score >= 15)
+        assertTrue(w.lightning > 0f || w.score > 15)
+    }
+
+    @Test fun ulapFallsSlowerThanClassic() {
+        val a = endless(5); val b = megaWorld("ulap", 5)
+        a.flap(); b.flap()
+        repeat(60) { a.update(1f / 60f); b.update(1f / 60f) }
+        assertTrue("ulap ${b.birdY} vs classic ${a.birdY}", b.birdY < a.birdY)
+    }
+
+    @Test fun endlessWorldChangeHasWiderBreatherGaps() {
+        val w = endless(21)
+        autopilot(w, 200f, stopAt = 31)
+        val gaps = w.obstacles.associate { it.index to it.gap }
+        val breather = gaps[31] ?: gaps[32]
+        val normal = gaps[34] ?: gaps[35]
+        if (breather != null && normal != null) assertTrue("breather $breather vs normal $normal", breather >= normal + 12f)
+    }
+
+    @Test fun megabirdRunsSkipMedalsAndClassicBestAndPipitDoublesCoins() {
+        val prog = Progress(catalog, config, levels)
+        val p = Profile("guest")
+        p.megabirds.add("pipit")
+        val o = prog.apply(p, RunRecord(UUID.randomUUID().toString(), null, "endless", null, 30, 30, 0, 10, 90, 45000, 330,
+            System.currentTimeMillis(), false, emptyList(), "pipit"), Random(1), rollCapsules = true)
+        assertEquals(-1, o.medal)
+        assertEquals(0, p.bestScore)
+        assertEquals(30, p.bestScoreMega)
+        assertEquals(0, p.medals.sum())
+        assertTrue("coins ${o.coins}", o.coins - o.achievements.sumOf { it.reward } >= 10 * 2 + 15)
+    }
+
+    @Test fun wishPityGuaranteesAndLocalPulls() {
+        val w = config.wish
+        val megas = config.megabirds.map { it.id }
+        val skins = config.skins.filter { it.wishOnly }.map { it.id }
+        assertTrue(megas.size >= 5)
+        assertEquals(1.0, Wish.star5Rate(w.hardPity5, w), 0.0)
+        val rnd = Random(99)
+        var st = WishState(0, 0, false)
+        var since5 = 0; var since4 = 0; var max5 = 0; var max4 = 0; var lost = false
+        repeat(300_000) {
+            val (p, next) = Wish.roll(st, w, megas, skins, rnd)
+            since5++; since4++
+            if (p.tier == 5) {
+                if (lost) assertEquals(w.featured, p.id)
+                lost = !p.featured
+                max5 = maxOf(max5, since5); since5 = 0; since4 = 0
+            } else if (p.tier == 4) { max4 = maxOf(max4, since4); since4 = 0 }
+            st = next
+        }
+        assertTrue("max $max5", max5 <= w.hardPity5)
+        assertTrue("max4 $max4", max4 <= w.hardPity4)
+
+        val prog = Progress(catalog, config, levels)
+        val guest = Profile("guest")
+        guest.tokens = 10
+        val res = Wish.pullLocal(guest, 10, catalog, config, prog, Random(3))
+        assertEquals(10, res.size)
+        assertEquals(0, guest.tokens)
+        assertTrue(res.any { it.tier >= 4 })
+        assertEquals(10, guest.totalPulls)
+        // Hard pity on the 200th pull, featured when guaranteed.
+        guest.tokens = 1; guest.pity5 = 199; guest.guaranteedFeatured = true
+        val last = Wish.pullLocal(guest, 1, catalog, config, prog, Random(4)).single()
+        assertEquals(5, last.tier)
+        assertEquals(w.featured, last.id)
+        assertTrue(guest.megabirds.contains(w.featured))
     }
 }

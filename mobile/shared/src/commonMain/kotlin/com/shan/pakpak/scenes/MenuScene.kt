@@ -42,7 +42,7 @@ class MenuScene : Scene() {
 
         val compact = g.h < 420
         // Total block height is ~300px; centre it between the top bar and the ground on tall screens.
-        val blockH = 300
+        val blockH = 324
         val free = g.h - 44 - 40 - blockH
         val titleY = if (compact) 56 else 64 + (free / 2).coerceIn(0, 80)
         val bob = sin(G.time * 5f) * 3f
@@ -53,7 +53,8 @@ class MenuScene : Scene() {
         val bx = 14
         val bw = g.w - 28
         var y = titleY + (if (compact) 30 else 44)
-        if (ui.button(bx, y, bw, 24, "PLAY ENDLESS", Style.PRIMARY)) G.scenes.push(PlayScene.endless())
+        val flying = G.config.megabird(p.selectedMegabird)?.takeIf { p.megabirds.contains(it.id) }
+        if (ui.button(bx, y, bw, 24, if (flying != null) "PLAY ENDLESS - ${flying.name.uppercase()}" else "PLAY ENDLESS", Style.PRIMARY)) G.scenes.push(PlayScene.endless())
         y += 28
         if (ui.button(bx, y, bw, 22, "ADVENTURE", Style.GREEN)) G.scenes.push(LevelSelectScene())
         y += 28
@@ -67,6 +68,10 @@ class MenuScene : Scene() {
         y += gap
         if (ui.button(bx, y, half, rowH, "Profile", Style.PLAIN)) G.scenes.push(ProfileScene())
         if (ui.button(bx + half + 6, y, half, rowH, "Settings", Style.PLAIN)) G.scenes.push(SettingsScene())
+        y += gap
+        val tokens = if (p.tokens > 0) " (${p.tokens})" else ""
+        if (ui.button(bx, y, half, rowH, "* Tala Wish$tokens", Style.BLUE)) G.scenes.push(WishScene())
+        if (ui.button(bx + half + 6, y, half, rowH, "Megabirds ${p.megabirds.size}/${G.config.megabirds.size}", Style.GREEN)) G.scenes.push(MegabirdScene())
         y += gap + 6
 
         g.textShadow("ONLINE (account)", bx, y, Pal.CREAM)

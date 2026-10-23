@@ -89,9 +89,11 @@ class Gfx(val c: Canvas, val w: Int, val h: Int) {
     fun bitmapCentered(b: ImageBitmap, cx: Float, cy: Float, scale: Int = 1, alpha: Int = 255) =
         bitmap(b, (cx - b.width * scale / 2f).toInt(), (cy - b.height * scale / 2f).toInt(), scale, alpha)
 
-    fun bitmapRegion(b: ImageBitmap, sx: Int, sy: Int, sw: Int, sh: Int, x: Int, y: Int, dw: Int = sw, dh: Int = sh) {
-        if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0) return
+    fun bitmapRegion(b: ImageBitmap, sx: Int, sy: Int, sw: Int, sh: Int, x: Int, y: Int, dw: Int = sw, dh: Int = sh, alpha: Int = 255) {
+        if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0 || alpha <= 0) return
+        sprite.alpha = alpha / 255f
         c.drawImageRect(b, IntOffset(sx, sy), IntSize(sw, sh), IntOffset(x, y), IntSize(dw, dh), sprite)
+        sprite.alpha = 1f
     }
 
     fun bitmapRotated(b: ImageBitmap, cx: Float, cy: Float, degrees: Float, scale: Float = 1f) {

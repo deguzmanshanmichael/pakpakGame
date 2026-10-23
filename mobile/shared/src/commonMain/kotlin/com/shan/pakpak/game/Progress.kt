@@ -30,6 +30,7 @@ class RunOutcome {
     /** Set when the server has answered for an account run. */
     var confirmed = false
     var rejectedReason: String? = null
+    var megabird: com.shan.pakpak.data.Megabird? = null
 }
 
 /**
@@ -49,9 +50,15 @@ class Progress(private val catalog: Catalog, private val cfg: GameConfig, privat
         p.totalFlaps += run.flaps
 
         if (run.mode == "endless") {
-            out.medal = Rules.medalFor(run.score, cfg.medals)
-            if (run.score > p.bestScore) { out.newBest = p.bestScore > 0; p.bestScore = run.score }
-            val raw = run.coinsCollected + Rules.milestoneCoins(run.score, eco)
+            // Megabird runs earn coins and capsules but never medals, milestone items or the Classic best.
+            val mega = cfg.megabird(run.megabird)
+            out.megabird = mega
+            if (mega == null) {
+                out.medal = Rules.medalFor(run.score, cfg.medals)
+                if (run.score > p.bestScore) { out.newBest = p.bestScore > 0; p.bestScore = run.score }
+            } else if (run.score > p.bestScoreMega) { out.newBest = p.bestScoreMega > 0; p.bestScoreMega = run.score }
+            val coinMult = if (mega?.power == "coins") mega.param("multiplier", 2.0).toInt() else 1
+            val raw = run.coinsCollected * coinMult + Rules.milestoneCoins(run.score, eco)
             val coins = min(raw, (eco.dailyEndlessCoinCap - p.dailyEndlessCoins).coerceAtLeast(0))
             if (coins < raw) out.notes.add("Daily coin cap reached")
             p.dailyEndlessCoins += coins

@@ -78,11 +78,12 @@ class ProfileScene : UiScene("Profile") {
             g.box(x, ry, w, rowH - 3, if (equipped) Pal.CREAM else Pal.PAPER, Pal.PAPER_DARK)
             g.bitmap(Sprites.bird(s, ((G.time * 8).toInt() % 3)), x + 4, ry + 1, 2)
             g.text(s.name, x + 44, ry + 5, Pal.INK)
-            g.text(if (owned) "Owned" else "${s.price} coins", x + 44, ry + 15, Pal.MUTED)
+            g.text(when { owned -> "Owned"; s.wishOnly -> "From Tala Wish"; else -> "${s.price} coins" }, x + 44, ry + 15, if (s.wishOnly && !owned) Pal.BLUE_DARK else Pal.MUTED)
             val bx = x + w - 60
             when {
                 equipped -> g.text("Equipped", bx + 4, ry + 10, Pal.GREEN_DARK)
                 owned -> if (ui.button(bx, ry + 4, 56, 18, "Equip", Style.GREEN)) G.account.equipSkin(s.id)
+                s.wishOnly -> if (ui.button(bx, ry + 4, 56, 18, "Wish", Style.BLUE)) G.scenes.push(WishScene())
                 else -> if (ui.button(bx, ry + 4, 56, 18, "Buy", Style.PRIMARY, p.coins >= s.price)) {
                     G.scenes.confirm("Buy ${s.name}?", "Spend ${s.price} Pak Coins (virtual currency) on this cosmetic skin? Skins don't change gameplay.", "Buy") {
                         G.account.buySkin(s.id, s.price) { ok, msg -> if (ok) G.audio.play("buy"); G.scenes.toast(msg) }

@@ -50,7 +50,14 @@ class PlayScene private constructor(private val mode: String, private val level:
     private var outcome: RunOutcome? = null
     private var resultsT = 0f
     private var shake = 0f
-    private var flash = 0f
+    /** Soft colored edge glow (replaces full-screen white flashes, which were disorienting). */
+    private var glow = 0f
+    private var glowColor = Pal.RED
+    /** World change crossfade: the previous theme fades out over THEME_FADE seconds. */
+    private var prevTheme: com.shan.pakpak.game.Theme? = null
+    private var themeFade = 0f
+    private val THEME_FADE = 2.5f
+    private var mega: com.shan.pakpak.data.Megabird? = null
     private var banner: String? = null
     private var bannerT = 0f
     private var revealed = 0
@@ -64,7 +71,12 @@ class PlayScene private constructor(private val mode: String, private val level:
         worldW = G.vw
         worldH = G.vh
         val seed = level?.seed ?: Random.nextLong()
-        world = World(RunSpec(mode, level, G.config.drops, G.config.economy.coinChance, seed), worldW.toFloat(), worldH.toFloat())
+        // Megabirds are Endless-only.
+        mega = if (level == null) G.config.megabird(G.account.profile.selectedMegabird)?.takeIf { G.account.profile.megabirds.contains(it.id) } else null
+        world = World(RunSpec(mode, level, G.config.drops, G.config.economy.coinChance, seed, mega), worldW.toFloat(), worldH.toFloat())
+        prevTheme = null
+        themeFade = 0f
+        glow = 0f
         runId = newId()
         ticket = null
         playedAt = nowMs()
@@ -96,7 +108,8 @@ class PlayScene private constructor(private val mode: String, private val level:
     override fun update(dt: Float) {
         fx.update(dt)
         if (shake > 0) shake -= dt
-        if (flash > 0) flash -= dt
+        if (glow > 0) glow -= dt
+        if (themeFade > 0) themeFade -= dt
         if (bannerT > 0) bannerT -= dt
         if (paused) return
         val inp = G.input
@@ -121,7 +134,7 @@ class PlayScene private constructor(private val mode: String, private val level:
                     val big = item.rarity.ordinal >= Rarity.RARE.ordinal
                     G.audio.play(if (big) "rare" else "capsule")
                     fx.burst(G.vw / 2f, G.vh / 2f, if (big) 40 else 14, intArrayOf(item.rarity.color, Color.WHITE, Pal.GOLD), 90f, 0.9f, 60f, if (big) 2 else 1)
-                    if (item.rarity.ordinal >= Rarity.LEGENDARY.ordinal) { flash = 0.6f; fx.confetti(G.vw, 80, intArrayOf(item.rarity.color, Pal.GOLD, Color.WHITE, Pal.RED)) }
+                    if (item.rarity.ordinal >= Rarity.LEGENDARY.ordinal) { glow = 0.8f; glowColor = item.rarity.color; fx.confetti(G.vw, 80, intArrayOf(item.rarity.color, Pal.GOLD, Color.WHITE, Pal.RED)) }
                 }
             }
         }
@@ -141,15 +154,35 @@ class PlayScene private constructor(private val mode: String, private val level:
                 banner = "Mystery capsule!"; bannerT = 1.2f
             }
             WorldEvent.HIT -> {
-                G.audio.play("hit"); shake = 0.25f; flash = 0.12f; G.haptic()
-                fx.burst(bx, by, 14, skin(G.account.profile.equippedSkin).colors.copyOfRange(1, 4), 80f, 0.7f, 200f)
+                G.audio.play("hit"); if (G.settings.screenShake) shake = 0.25f; glow = 0.35f; glowColor = Pal.RED; G.haptic()
+                fx.burst(bx, by, 14, birdSkin().colors.copyOfRange(1, 4), 80f, 0.7f, 200f)
             }
             WorldEvent.LAND -> G.audio.play("die")
             WorldEvent.WIN -> {
                 G.audio.play("win")
                 fx.confetti(G.vw, 70, intArrayOf(Pal.GOLD, Pal.RED, Pal.GREEN, Pal.BLUE, Color.WHITE))
             }
-            WorldEvent.THEME -> { flash = 0.5f; banner = "Now entering ${THEME_NAMES[world.theme]}"; bannerT = 2f }
+            WorldEvent.THEME -> {
+                // Smooth crossfade into the new world instead of a flash; the next 2 gaps are wider (World "breather").
+                prevTheme = themeBefore(world.theme)
+                themeFade = THEME_FADE
+                banner = "Now entering ${THEME_NAMES[world.theme]}"; bannerT = 2.5f
+                G.audio.play("gem")
+            }
+            WorldEvent.SHIELD -> {
+                G.audio.play("hit", 1.4f); G.haptic(); glow = 0.4f; glowColor = mega?.aura ?: Pal.GOLD
+                fx.burst(bx, by, 18, intArrayOf(mega?.aura ?: Pal.GOLD, Color.WHITE), 90f, 0.6f, 0f)
+                banner = if (world.shields > 0) "Kalasag! ${world.shields} left" else "Last shield gone!"; bannerT = 1.4f
+            }
+            WorldEvent.REVIVE -> {
+                G.audio.play("rare"); glow = 0.8f; glowColor = mega?.aura ?: Pal.GOLD
+                fx.burst(bx, by, 40, intArrayOf(mega?.aura ?: Pal.GOLD, Pal.ORANGE, Color.WHITE), 110f, 0.9f, -40f, 2)
+                banner = "Muling Bangon!"; bannerT = 1.6f
+            }
+            WorldEvent.LIGHTNING -> {
+                G.audio.play("capsule", 1.3f); glow = 0.5f; glowColor = mega?.aura ?: Pal.YELLOW
+                banner = "Kidlat! Fly through!"; bannerT = 1.4f
+            }
         }
         world.events.clear()
     }
@@ -161,6 +194,7 @@ class PlayScene private constructor(private val mode: String, private val level:
             clientRunId = runId, ticketId = ticket, mode = mode, levelId = level?.id, score = w.score, pipes = w.score,
             gems = w.gems, coinsCollected = w.coins, flaps = w.flaps, durationMs = (w.playTime * 1000).toLong(),
             distance = (w.distance / 10f).toInt(), playedAt = playedAt, completed = w.completed, pickups = w.capsulePipes.toList(),
+            megabird = mega?.id,
         )
         outcome = G.account.finishRun(rec)
         revealTimer = 0f
@@ -174,11 +208,14 @@ class PlayScene private constructor(private val mode: String, private val level:
             if (!finished) { start(); return }
         }
         val w = world
-        val sx = if (shake > 0) (Random.nextInt(3) - 1) * 2 else 0
+        val sx = if (shake > 0 && G.settings.screenShake) (Random.nextInt(3) - 1) * 2 else 0
         g.c.save()
         g.c.translate(sx.toFloat(), 0f)
         val gh = World.GROUND_H.toInt()
+        val pt = prevTheme
+        val fadeA = if (pt != null && themeFade > 0f) ((themeFade / THEME_FADE) * 255).toInt().coerceIn(0, 255) else 0
         Backgrounds.drawSky(g, w.theme, w.distance, G.time, gh)
+        if (fadeA > 0 && pt != null) Backgrounds.drawSky(g, pt, w.distance, G.time, gh, fadeA)
         drawWind(g)
         for (o in w.obstacles) drawObstacle(g, o)
         for (p in w.pickups) {
@@ -199,8 +236,9 @@ class PlayScene private constructor(private val mode: String, private val level:
         drawBird(g)
         fx.draw(g)
         Backgrounds.drawGround(g, w.theme, w.distance, gh)
+        if (fadeA > 0 && pt != null) Backgrounds.drawGround(g, pt, w.distance, gh, fadeA)
         g.c.restore()
-        if (flash > 0) g.rect(0, 0, g.w, g.h, g.alpha(Color.WHITE, min(1f, flash * 2f)))
+        if (glow > 0) drawEdgeGlow(g, glowColor, min(1f, glow * 1.5f))
 
         drawHud(g, ui)
         if (w.state == RunState.READY) drawReady(g)
@@ -254,7 +292,7 @@ class PlayScene private constructor(private val mode: String, private val level:
 
     private fun drawBird(g: Gfx) {
         val w = world
-        val sk = skin(G.account.profile.equippedSkin)
+        val sk = birdSkin()
         val frame = when {
             w.state == RunState.DYING || w.state == RunState.DEAD -> 1
             w.state == RunState.READY -> ((G.time * 8).toInt() % 3)
@@ -266,7 +304,18 @@ class PlayScene private constructor(private val mode: String, private val level:
             RunState.DEAD, RunState.DYING -> 80f
             else -> (w.birdVy / World.MAX_FALL * 70f).coerceIn(-22f, 75f)
         }
-        g.bitmapRotated(Sprites.bird(sk, frame), w.birdX, w.birdY, angle)
+        val m = mega
+        if (m != null && w.state != RunState.DEAD) {
+            // Megabird aura, plus orbiting shield pips and a lightning ring for active powers.
+            g.disc(w.birdX, w.birdY, 10f + sin(G.time * 5f) * 1.5f, g.alpha(m.aura, 0.25f))
+            if (w.lightning > 0f) g.disc(w.birdX, w.birdY, 13f, g.alpha(Pal.YELLOW, 0.35f + 0.2f * sin(G.time * 30f)))
+            for (k in 0 until w.shields) {
+                val a = G.time * 3f + k * 2.094f
+                g.rect((w.birdX + kotlin.math.cos(a) * 12f).toInt() - 1, (w.birdY + sin(a) * 12f).toInt() - 1, 3, 3, m.aura)
+            }
+        }
+        val blinkHidden = w.invulnerable > 0f && ((G.time * 14f).toInt() % 2 == 0)
+        if (!blinkHidden) g.bitmapRotated(Sprites.bird(sk, frame), w.birdX, w.birdY, angle)
     }
 
     private fun drawHud(g: Gfx, ui: Ui) {
@@ -286,6 +335,18 @@ class PlayScene private constructor(private val mode: String, private val level:
             g.bitmap(Sprites.gem, 4, y); g.textShadow("${w.gems}/${level.gems}", 13, y, Pal.CREAM); y += 10
             g.textShadow("flaps ${w.flaps}/${level.maxFlaps}", 4, y, if (w.flaps > level.maxFlaps) Pal.RED else Pal.CREAM)
         } else {
+            mega?.let { m ->
+                g.textShadow(m.name, 4, y, m.aura); y += 10
+                val status = when (m.power) {
+                    "shield" -> "shields ${w.shields}"
+                    "revive" -> if (w.revives > 0) "revive ready" else "revive used"
+                    "lightning" -> if (w.lightning > 0f) "KIDLAT!" else "next at ${((w.score / 15) + 1) * 15}"
+                    "magnet" -> "magnet on"
+                    "float" -> "light wings"
+                    else -> "coins x2"
+                }
+                g.textShadow(status, 4, y, Pal.CREAM); y += 10
+            }
             g.bitmap(Sprites.coinSmall, 4, y); g.textShadow(w.coins.toString(), 13, y, Pal.CREAM); y += 10
             if (w.capsulePipes.isNotEmpty()) { g.bitmap(Sprites.capsule, 3, y); g.textShadow("x${w.capsulePipes.size}", 14, y + 1, Pal.CREAM) }
         }
@@ -351,10 +412,16 @@ class PlayScene private constructor(private val mode: String, private val level:
             g.bitmap(Sprites.medal(medalIdx), x + 12, cy, 3)
             val mx = x + 52
             g.text("SCORE", mx, cy, Pal.MUTED); g.text(w.score.toString(), mx + 40, cy, Pal.INK)
-            g.text("BEST", mx, cy + 11, Pal.MUTED); g.text(G.account.profile.bestScore.toString(), mx + 40, cy + 11, Pal.INK)
+            val megaRun = o.megabird != null
+            g.text(if (megaRun) "MEGA" else "BEST", mx, cy + 11, Pal.MUTED)
+            g.text((if (megaRun) G.account.profile.bestScoreMega else G.account.profile.bestScore).toString(), mx + 40, cy + 11, Pal.INK)
             if (o.newBest) g.text("NEW!", mx + 70, cy + 11, Pal.RED)
             g.text("DIST", mx, cy + 22, Pal.MUTED); g.text("${(w.distance / 10).toInt()}m", mx + 40, cy + 22, Pal.INK)
-            val medalName = if (medalIdx >= 0) Rules.MEDALS[medalIdx].replaceFirstChar { it.uppercase() } + " medal" else nextMedalHint(w.score)
+            val medalName = when {
+                megaRun -> "${o.megabird?.name} run (no medals)"
+                medalIdx >= 0 -> Rules.MEDALS[medalIdx].replaceFirstChar { it.uppercase() } + " medal"
+                else -> nextMedalHint(w.score)
+            }
             g.text(medalName, mx, cy + 33, if (medalIdx >= 0) Pal.ORANGE_DARK else Pal.MUTED)
             cy += 48
         } else {
@@ -422,5 +489,24 @@ class PlayScene private constructor(private val mode: String, private val level:
         val t = G.config.medals
         val next = t.firstOrNull { it > score } ?: return ""
         return "Bronze at ${t[0]}".takeIf { score < t[0] } ?: "Next medal at $next"
+    }
+
+    private fun birdSkin() = mega?.skin ?: skin(G.account.profile.equippedSkin)
+
+    private fun themeBefore(t: com.shan.pakpak.game.Theme): com.shan.pakpak.game.Theme {
+        val all = com.shan.pakpak.game.Theme.entries
+        return all[(t.ordinal - 1 + all.size) % all.size]
+    }
+
+    /** A soft glow around the screen edges: clear feedback without a full-screen flash. */
+    private fun drawEdgeGlow(g: Gfx, color: Int, strength: Float) {
+        val bands = 6
+        for (i in 0 until bands) {
+            val c = g.alpha(color, strength * 0.35f * (1f - i / bands.toFloat()))
+            g.rect(0, i * 2, g.w, 2, c)
+            g.rect(0, g.h - (i + 1) * 2, g.w, 2, c)
+            g.rect(i * 2, 0, 2, g.h, c)
+            g.rect(g.w - (i + 1) * 2, 0, 2, g.h, c)
+        }
     }
 }

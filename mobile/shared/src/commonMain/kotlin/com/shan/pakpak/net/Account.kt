@@ -285,6 +285,62 @@ class Account(private val store: SaveStore, private val api: Api) {
         }
     }
 
+    // ---------------------------------------------------------------- Hiling ni Tala
+
+    fun buyTokens(count: Int, cb: (Boolean, String) -> Unit) {
+        val p = profile
+        val price = G.config.wish.tokenPrice * count
+        if (isGuest) {
+            if (p.coins < price) return cb(false, "Not enough Pak Coins")
+            p.coins -= price
+            p.tokens += count
+            save()
+            return cb(true, "Bought $count ${G.config.wish.tokenName}${if (count > 1) "s" else ""}")
+        }
+        if (!G.net.online) return cb(false, "Go online to buy tokens on your account")
+        if (p.coins < price) return cb(false, "Not enough Pak Coins")
+        val body = JSONObject().put("count", count).put("clientBuyId", com.shan.pakpak.util.newId())
+        api.post("/api/wish/buy-tokens", body, retry = true) { r ->
+            if (r.ok) { acct?.applyServerState(r.obj().getJSONObject("state")); save() }
+            cb(r.ok, if (r.ok) "Bought $count ${G.config.wish.tokenName}${if (count > 1) "s" else ""}" else r.message)
+        }
+    }
+
+    /** Pulls [count] wishes. Guests roll locally; accounts roll on the server (pity is stored there). */
+    fun wish(count: Int, cb: (List<com.shan.pakpak.data.WishEntry>?, String) -> Unit) {
+        val p = profile
+        if (p.tokens < count) return cb(null, "You need $count ${G.config.wish.tokenName}${if (count > 1) "s" else ""}")
+        if (isGuest) {
+            val res = com.shan.pakpak.game.Wish.pullLocal(p, count, G.catalog, G.config, G.progress)
+            save()
+            return cb(res, "")
+        }
+        if (!G.net.online) return cb(null, "Go online to wish on your account. Guest wishes work offline.")
+        // The client id makes retries safe: the server returns the same results instead of pulling again.
+        val body = JSONObject().put("count", count).put("clientWishId", com.shan.pakpak.util.newId())
+        api.post("/api/wish/pull", body, retry = true) { r ->
+            if (!r.ok) return@post cb(null, r.message)
+            val arr = r.obj().getJSONArray("results")
+            val res = (0 until arr.length()).map { i ->
+                val e = arr.getJSONObject(i)
+                com.shan.pakpak.data.WishEntry(e.optInt("tier", 3), e.optString("type"), if (e.isNull("id")) null else e.optString("id"),
+                    e.optString("name"), e.optInt("amount"), e.optBoolean("duplicate"), e.optBoolean("featured"), e.optInt("pity"))
+            }
+            acct?.let { a ->
+                a.applyServerState(r.obj().getJSONObject("state"))
+                a.wishHistory.addAll(res)
+                while (a.wishHistory.size > 60) a.wishHistory.removeAt(0)
+            }
+            save()
+            cb(res, "")
+        }
+    }
+
+    fun selectMegabird(id: String) {
+        profile.selectedMegabird = id
+        save()
+    }
+
     companion object {
         const val GUEST_FILE = "guest.json"
         const val SESSION_FILE = "session.json"

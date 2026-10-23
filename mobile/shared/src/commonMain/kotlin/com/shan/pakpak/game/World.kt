@@ -17,7 +17,7 @@ enum class Theme(val key: String) {
 
 enum class RunState { READY, PLAYING, DYING, DEAD, WON }
 enum class PickupKind { COIN, CAPSULE, GEM }
-enum class WorldEvent { FLAP, SCORE, COIN, CAPSULE, GEM, HIT, LAND, WIN, THEME }
+enum class WorldEvent { FLAP, SCORE, COIN, CAPSULE, GEM, HIT, LAND, WIN, THEME, SHIELD, REVIVE, LIGHTNING }
 
 class Obstacle(
     var x: Float, val baseGapY: Float, val gap: Float, val index: Int, val theme: Theme,
@@ -37,6 +37,8 @@ class Pickup(var x: Float, val baseY: Float, val kind: PickupKind, val obstacleI
     var y = baseY
     var taken = false
     var t = 0f
+    /** Pulled toward the bird by the Kalaw megabird's magnet. */
+    var magnet = false
 }
 
 class WindZone(var x0: Float, var x1: Float, val force: Float)
@@ -48,6 +50,8 @@ class RunSpec(
     val drops: DropConfig,
     val coinChance: Float,
     val seed: Long,
+    /** Megabird flown this run (Endless only), or null for the Classic bird. */
+    val megabird: com.shan.pakpak.data.Megabird? = null,
 )
 
 /**
@@ -88,6 +92,22 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
     var theme: Theme = spec.level?.let { Theme.of(it.theme) } ?: Theme.MEADOW
     var deathCause = ""
 
+    // Megabird powers
+    val power: String? = spec.megabird?.power
+    var shields = if (power == "shield") spec.megabird!!.param("hits", 3.0).toInt() else 0
+    var revives = if (power == "revive") spec.megabird!!.param("count", 1.0).toInt() else 0
+    /** Seconds of post-hit protection (blinking bird, passes through obstacles). */
+    var invulnerable = 0f
+    /** Seconds left of the Kidlat lightning power. */
+    var lightning = 0f
+    private val lightningEvery = if (power == "lightning") spec.megabird!!.param("every", 15.0).toInt() else 0
+    private var nextLightningAt = lightningEvery
+    private val gravityMul = if (power == "float") spec.megabird!!.param("gravity", 0.78).toFloat() else 1f
+    private val fallMul = if (power == "float") spec.megabird!!.param("fall", 0.75).toFloat() else 1f
+    private val flapMul = if (power == "float") spec.megabird!!.param("flap", 0.86).toFloat() else 1f
+    private val magnetRadius = if (power == "magnet") spec.megabird!!.param("radius", 48.0).toFloat() else 0f
+    val protectedNow get() = invulnerable > 0f || lightning > 0f
+
     private val rnd = Random(spec.seed)
     private var generated = 0
     private var lastGapY = groundY * 0.5f
@@ -126,7 +146,8 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
         }
         if (state == RunState.DEAD || state == RunState.WON) { pendingFlaps = 0; return }
         acc += dt
-        while (acc >= STEP) {
+        // Stop stepping the moment the run ends, so a landed bird can't "die" again later in the same frame.
+        while (acc >= STEP && state != RunState.DEAD && state != RunState.WON) {
             step(STEP)
             acc -= STEP
         }
@@ -141,13 +162,15 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
             return
         }
         playTime += dt
+        if (invulnerable > 0f) invulnerable -= dt
+        if (lightning > 0f) lightning -= dt
         if (pendingFlaps > 0) {
             pendingFlaps = 0
-            birdVy = FLAP_V
+            birdVy = FLAP_V * flapMul
             flaps++
             events.add(WorldEvent.FLAP)
         }
-        birdVy = min(MAX_FALL, birdVy + GRAVITY * dt)
+        birdVy = min(MAX_FALL * fallMul, birdVy + GRAVITY * gravityMul * dt)
         for (wz in winds) if (birdX >= wz.x0 && birdX <= wz.x1) birdVy += wz.force * dt
         birdY += birdVy * dt
         if (birdY < BIRD_R) { birdY = BIRD_R; if (birdVy < 0) birdVy = 0f }
@@ -160,9 +183,20 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
             o.hazard?.let { h -> h.y = o.gapY + sin(playTime * 2.4f + h.phase) * h.amp }
         }
         for (p in pickups) {
-            p.x -= dx
             p.t += dt
+            if (p.magnet) {
+                val k = min(1f, 12f * dt)
+                p.x += (birdX - p.x) * k
+                p.y += (birdY - p.y) * k
+                continue
+            }
+            p.x -= dx
             p.y = (p.follow?.gapY ?: p.baseY) + p.offsetY + sin(p.t * 4f) * 1.5f
+            if (magnetRadius > 0f) {
+                val mx = p.x - birdX
+                val my = p.y - birdY
+                if (mx * mx + my * my < magnetRadius * magnetRadius) p.magnet = true
+            }
         }
         for (wz in winds) { wz.x0 -= dx; wz.x1 -= dx }
         if (!gateX.isNaN()) gateX -= dx
@@ -179,6 +213,11 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
                 score++
                 events.add(WorldEvent.SCORE)
                 if (endless && score % THEME_EVERY == 0) { theme = Theme.entries[(score / THEME_EVERY) % Theme.entries.size]; events.add(WorldEvent.THEME) }
+                if (lightningEvery > 0 && score >= nextLightningAt) {
+                    nextLightningAt += lightningEvery
+                    lightning = spec.megabird!!.param("duration", 3.0).toFloat()
+                    events.add(WorldEvent.LIGHTNING)
+                }
             }
         }
         // Pickups
@@ -202,18 +241,46 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
             if (!gateX.isNaN() && gateX < birdX) { win(); return }
         }
         // Collisions
-        if (birdY + BIRD_R >= groundY) { die("ground"); return }
+        if (birdY + BIRD_R >= groundY) {
+            if (protectedNow || absorbHit()) { birdY = groundY - BIRD_R - 1f; birdVy = FLAP_V * 0.8f } else { die("ground"); return }
+        }
+        if (protectedNow) return
         for (o in obstacles) {
+            var cause: String? = null
             if (circleRect(birdX, birdY, BIRD_R, o.x, -1000f, OBSTACLE_W, o.top + 1000f) ||
-                circleRect(birdX, birdY, BIRD_R, o.x, o.bottom, OBSTACLE_W, groundY - o.bottom)) { die("obstacle"); return }
+                circleRect(birdX, birdY, BIRD_R, o.x, o.bottom, OBSTACLE_W, groundY - o.bottom)) cause = "obstacle"
             val h = o.hazard
-            if (h != null) {
+            if (cause == null && h != null) {
                 val hx = o.x + OBSTACLE_W / 2
                 val ddx = hx - birdX
                 val ddy = h.y - birdY
-                if (sqrt(ddx * ddx + ddy * ddy) < 5f + BIRD_R - 0.5f) { die("spikes"); return }
+                if (sqrt(ddx * ddx + ddy * ddy) < 5f + BIRD_R - 0.5f) cause = "spikes"
+            }
+            if (cause != null) {
+                if (!absorbHit()) { die(cause); return }
+                return
             }
         }
+    }
+
+    /** Megabird protection: Haribon's shield takes the hit, or Minokawa rises again. */
+    private fun absorbHit(): Boolean {
+        if (shields > 0) {
+            shields--
+            invulnerable = 1.4f
+            birdVy = FLAP_V * 0.6f
+            events.add(WorldEvent.SHIELD)
+            return true
+        }
+        if (revives > 0) {
+            revives--
+            invulnerable = spec.megabird!!.param("invulnerable", 2.0).toFloat()
+            birdVy = 0f
+            nextObstacle()?.let { birdY = it.gapY.coerceIn(BIRD_R + 4f, groundY - BIRD_R - 4f) }
+            events.add(WorldEvent.REVIVE)
+            return true
+        }
+        return false
     }
 
     private fun win() {
@@ -245,7 +312,10 @@ class World(val spec: RunSpec, val viewW: Float, val viewH: Float) {
         val maxY = (groundY + band) / 2 - gap / 2 - 4
         // Cap the jump between consecutive gaps so a fast climb is always physically possible.
         val maxDelta = 50f + difficulty * 80f
-        val roll = rnd.nextFloat() * 2 - 1
+        var roll = rnd.nextFloat() * 2 - 1
+        // Breather: the first two obstacles of each new Endless world get wider, gentler gaps.
+        val breather = endless && index > THEME_EVERY && (index - 1) % THEME_EVERY < 2
+        if (breather) { gap += 14f; roll *= 0.5f }
         val th = if (level != null) Theme.of(level.theme) else Theme.entries[((index - 1) / THEME_EVERY) % Theme.entries.size]
         var amp = 0f
         var mspeed = 0f

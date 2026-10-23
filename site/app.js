@@ -57,28 +57,49 @@
 
   // Version, date and file size from the GitHub API (works without a token for public repos).
   if (!repo || repo.startsWith("YOUR-")) { $("version").textContent = "Setup needed: set your repo in config.js"; return; }
+  // Release details are a nice-to-have: the download links above work without them. GitHub limits
+  // anonymous API calls (~60/hour per network), so a failed call must never disable the buttons.
+  const CACHE_KEY = `pakpak-release:${repo}`;
+  const showRelease = (rel) => {
+    const date = new Date(rel.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    $("version").textContent = `Version ${rel.tag_name.replace(/^v/, "")} · ${date}`;
+    const apk = (rel.assets || []).find((a) => a.name === "PakPak.apk");
+    if (apk) $("apk-size").textContent = `APK · ${(apk.size / 1048576).toFixed(1)} MB`;
+    if (!(rel.assets || []).some((a) => a.name === "PakPak-iOS-unsigned.ipa") && !cfg.testflightUrl && !cfg.appStoreUrl) {
+      iosBtn.removeAttribute("href");
+      iosBtn.textContent = "iPhone version coming soon";
+      iosBtn.classList.add("btn-disabled");
+    }
+  };
+  const noRelease = () => {
+    $("version").textContent = "No release published yet";
+    $("btn-apk").removeAttribute("href");
+    $("btn-apk").textContent = "Coming soon";
+    $("btn-apk").classList.add("btn-disabled");
+    if (!cfg.testflightUrl && !cfg.appStoreUrl) {
+      iosBtn.removeAttribute("href");
+      iosBtn.textContent = "Coming soon";
+      iosBtn.classList.add("btn-disabled");
+    }
+  };
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (_) { cached = null; }
+  if (cached) showRelease(cached);
   fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers: { Accept: "application/vnd.github+json" } })
-    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then((r) => {
+      if (r.status === 404) { noRelease(); return null; } // genuinely no release yet
+      return r.ok ? r.json() : Promise.reject(r.status);
+    })
     .then((rel) => {
-      const date = new Date(rel.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-      $("version").textContent = `Version ${rel.tag_name.replace(/^v/, "")} · ${date}`;
-      const apk = (rel.assets || []).find((a) => a.name === "PakPak.apk");
-      if (apk) $("apk-size").textContent = `APK · ${(apk.size / 1048576).toFixed(1)} MB`;
-      if (!(rel.assets || []).some((a) => a.name === "PakPak-iOS-unsigned.ipa") && !cfg.testflightUrl && !cfg.appStoreUrl) {
-        iosBtn.removeAttribute("href");
-        iosBtn.textContent = "iPhone version coming soon";
-        iosBtn.classList.add("btn-disabled");
-      }
+      if (!rel) return;
+      showRelease(rel);
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ tag_name: rel.tag_name, published_at: rel.published_at,
+          assets: (rel.assets || []).map((a) => ({ name: a.name, size: a.size })) }));
+      } catch (_) { /* storage unavailable: fine */ }
     })
     .catch(() => {
-      $("version").textContent = "No release published yet";
-      $("btn-apk").removeAttribute("href");
-      $("btn-apk").textContent = "Coming soon";
-      $("btn-apk").classList.add("btn-disabled");
-      if (!cfg.testflightUrl && !cfg.appStoreUrl) {
-        iosBtn.removeAttribute("href");
-        iosBtn.textContent = "Coming soon";
-        iosBtn.classList.add("btn-disabled");
-      }
+      // Rate-limited or offline: keep the (working) download buttons and stay neutral.
+      if (!cached) $("version").textContent = "Latest version";
     });
 })();

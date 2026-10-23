@@ -73,7 +73,8 @@ class ProfileScene : UiScene("Profile") {
         val off = ui.beginScroll("skins", x, y + 12, w, h - 12, list.size * rowH)
         for ((i, s) in list.withIndex()) {
             val ry = y + 12 + i * rowH - off
-            val owned = p.skins.contains(s.id) || s.price == 0
+            // Only the free starter skin is owned by default; wish-only skins (price 0) must be won.
+            val owned = p.skins.contains(s.id) || (s.price == 0 && !s.wishOnly)
             val equipped = p.equippedSkin == s.id
             g.box(x, ry, w, rowH - 3, if (equipped) Pal.CREAM else Pal.PAPER, Pal.PAPER_DARK)
             g.bitmap(Sprites.bird(s, ((G.time * 8).toInt() % 3)), x + 4, ry + 1, 2)

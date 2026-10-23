@@ -107,6 +107,11 @@ class PlayScene private constructor(private val mode: String, private val level:
 
     override fun update(dt: Float) {
         fx.update(dt)
+        mega?.let { m ->
+            if (::world.isInitialized && (world.state == RunState.PLAYING || world.state == RunState.READY) && !paused) {
+                com.shan.pakpak.gfx.MegaFx.trail(fx, m, world.birdX, world.birdY, G.time)
+            }
+        }
         if (shake > 0) shake -= dt
         if (glow > 0) glow -= dt
         if (themeFade > 0) themeFade -= dt
@@ -305,17 +310,22 @@ class PlayScene private constructor(private val mode: String, private val level:
             else -> (w.birdVy / World.MAX_FALL * 70f).coerceIn(-22f, 75f)
         }
         val m = mega
-        if (m != null && w.state != RunState.DEAD) {
-            // Megabird aura, plus orbiting shield pips and a lightning ring for active powers.
-            g.disc(w.birdX, w.birdY, 10f + sin(G.time * 5f) * 1.5f, g.alpha(m.aura, 0.25f))
-            if (w.lightning > 0f) g.disc(w.birdX, w.birdY, 13f, g.alpha(Pal.YELLOW, 0.35f + 0.2f * sin(G.time * 30f)))
+        val alive = w.state != RunState.DEAD && w.state != RunState.DYING
+        if (m != null && alive) {
+            // Each megabird's own aura, plus orbiting shield pips and a lightning ring for active powers.
+            com.shan.pakpak.gfx.MegaFx.drawBehind(g, m, w.birdX, w.birdY, G.time)
+            if (w.lightning > 0f) g.disc(w.birdX, w.birdY, 14f, g.alpha(Pal.YELLOW, 0.35f + 0.2f * sin(G.time * 30f)))
             for (k in 0 until w.shields) {
                 val a = G.time * 3f + k * 2.094f
-                g.rect((w.birdX + kotlin.math.cos(a) * 12f).toInt() - 1, (w.birdY + sin(a) * 12f).toInt() - 1, 3, 3, m.aura)
+                g.rect((w.birdX + kotlin.math.cos(a) * 14f).toInt() - 1, (w.birdY + sin(a) * 14f).toInt() - 1, 3, 3, m.aura)
             }
         }
         val blinkHidden = w.invulnerable > 0f && ((G.time * 14f).toInt() % 2 == 0)
-        if (!blinkHidden) g.bitmapRotated(Sprites.bird(sk, frame), w.birdX, w.birdY, angle)
+        if (!blinkHidden) {
+            val sprite = if (m != null) com.shan.pakpak.gfx.MegaSprites.frame(m, frame, ((G.time * 5f).toInt()) % 2) else Sprites.bird(sk, frame)
+            g.bitmapRotated(sprite, w.birdX, w.birdY, angle)
+        }
+        if (m != null && alive) com.shan.pakpak.gfx.MegaFx.drawFront(g, m, w.birdX, w.birdY, G.time)
     }
 
     private fun drawHud(g: Gfx, ui: Ui) {

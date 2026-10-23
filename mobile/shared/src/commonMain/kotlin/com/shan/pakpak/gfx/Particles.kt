@@ -26,6 +26,14 @@ class Particles(private val max: Int = 300) {
         }
     }
 
+    /** One directed particle (trails). */
+    fun spawn(x: Float, y: Float, vx: Float, vy: Float, life: Float, color: Int, size: Int = 1, grav: Float = 0f) {
+        if (count >= max) return
+        val p = pool[count++]
+        p.x = x; p.y = y; p.vx = vx; p.vy = vy
+        p.life = life; p.total = life; p.color = color; p.size = size; p.grav = grav
+    }
+
     /** Confetti falling from the top of the screen. */
     fun confetti(w: Int, n: Int, colors: IntArray) {
         repeat(n) {

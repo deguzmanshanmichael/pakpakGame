@@ -86,6 +86,7 @@ object G {
         api = Api(cfg.apiBaseUrl)
         net = Connectivity(api)
         account = Account(store, api)
+        account.sanitizeSkins()
         net.addListener { s ->
             if (s == Connectivity.State.ONLINE) {
                 loadRemoteData()

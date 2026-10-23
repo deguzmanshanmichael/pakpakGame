@@ -31,14 +31,13 @@ class SettingsScene : UiScene("Settings") {
             "Not affiliated with any other flappy game.", x, cy, w, Pal.INK) + 4
         cy += g.paragraph("Privacy: the app uses only the internet. No contacts, location, camera or files. " +
             "Accounts store a username and a hashed password only.", x, cy, w, Pal.MUTED) + 8
-        if (ui.button(x, cy, w, 18, "Reset guest progress", Style.RED)) {
-            G.scenes.confirm("Reset guest progress?", "This deletes the offline guest save on this device (collection, coins, levels). Accounts are not affected. This can't be undone.", "Reset", yesStyle = Style.RED) {
-                val fresh = Profile("guest")
-                val gst = G.account.guest
-                gst.items.clear(); gst.adventure.clear(); gst.achievements.clear(); gst.skins.clear(); gst.skins.add("pakpak")
-                gst.coins = fresh.coins; gst.bestScore = 0; gst.totalRuns = 0; gst.totalPipes = 0; gst.totalDistance = 0; gst.totalFlaps = 0
-                gst.medals.fill(0); gst.equippedSkin = "pakpak"; gst.sealedCapsules = 0
-                G.account.save()
+        val label = if (G.account.isGuest) "Reset guest progress" else "Reset guest save (not your account)"
+        if (ui.button(x, cy, w, 18, label, Style.RED)) {
+            G.scenes.confirm("Reset guest progress?",
+                "Deletes the offline guest save on this device: collection, coins, daily limits, levels, skins, megabirds, tokens and wish pity. " +
+                    "Signed-in accounts are not affected (their pity and items live on the server). This can't be undone.",
+                "Reset", yesStyle = Style.RED) {
+                G.account.resetGuest()
                 G.scenes.toast("Guest progress reset")
             }
         }

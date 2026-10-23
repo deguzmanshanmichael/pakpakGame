@@ -101,6 +101,25 @@ class ScreenshotTest {
         p.tokens = 12; p.pity5 = 143; p.pity4 = 6; p.megabirds.add("haribon"); p.megabirds.add("kidlat")
         shoot("wish", 216, 480, com.shan.pakpak.scenes.WishScene())
         shoot("megabirds", 216, 480, com.shan.pakpak.scenes.MegabirdScene())
+        for (m in G.config.megabirds) p.megabirds.add(m.id)
+        shoot("megabirds_all", 216, 480, com.shan.pakpak.scenes.MegabirdScene())
+        // Wish reveal: 10 pulls with a guaranteed megabird on the last one, fully revealed.
+        p.tokens = 11; p.pity5 = 190
+        val wish = com.shan.pakpak.scenes.WishScene()
+        shoot("wish_reveal10", 216, 480, wish, warm = 40) { gx ->
+            val m = com.shan.pakpak.scenes.WishScene::class.java.getDeclaredMethod("pull", Int::class.javaPrimitiveType)
+            m.isAccessible = true
+            m.invoke(wish, 10)
+            frames(gx, 60 * 4)
+        }
+        shoot("wish_reveal1", 216, 480, com.shan.pakpak.scenes.WishScene().also { w1 -> p.tokens = 1 }, warm = 40) { gx ->
+            val top = G.scenes.top!!
+            val m = top.javaClass.getDeclaredMethod("pull", Int::class.javaPrimitiveType)
+            m.isAccessible = true
+            m.invoke(top, 1)
+            frames(gx, 60 * 3)
+        }
+        p.megabirds.retainAll(setOf("haribon", "kidlat"))
         shoot("menu_mega", 216, 480, MenuScene().also { p.selectedMegabird = "haribon" })
 
         val endless = PlayScene.endless()

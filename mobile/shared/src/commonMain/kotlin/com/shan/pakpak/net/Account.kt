@@ -18,7 +18,8 @@ import kotlin.random.Random
  * retries can never be rewarded twice.
  */
 class Account(private val store: SaveStore, private val api: Api) {
-    val guest: Profile = store.read(GUEST_FILE)?.let { runCatching { Profile.fromJson(it) }.getOrNull() } ?: Profile("guest")
+    var guest: Profile = store.read(GUEST_FILE)?.let { runCatching { Profile.fromJson(it) }.getOrNull() } ?: Profile("guest")
+        private set
     var acct: Profile? = null
         private set
     private var token: String? = null
@@ -276,8 +277,26 @@ class Account(private val store: SaveStore, private val api: Api) {
         }
     }
 
+    /** Un-equips skins that were never earned (an old bug let wish-only skins be equipped for free). */
+    fun sanitizeSkins() {
+        for (p in listOfNotNull(guest, acct)) {
+            val skin = G.config.skins.firstOrNull { it.id == p.equippedSkin }
+            val ok = skin != null && (p.skins.contains(skin.id) || (skin.price == 0 && !skin.wishOnly))
+            if (!ok) p.equippedSkin = "pakpak"
+        }
+    }
+
+    /** Wipes the offline guest save completely: coins, daily caps, tokens, pity, megabirds, everything. */
+    fun resetGuest() {
+        guest = Profile("guest")
+        store.write(GUEST_FILE, guest.toJson())
+    }
+
     fun equipSkin(id: String) {
         val p = profile
+        val skin = G.config.skins.firstOrNull { it.id == id } ?: return
+        // Wish-only skins have price 0 but must be won; only the starter skin is free.
+        if (!p.skins.contains(id) && !(skin.price == 0 && !skin.wishOnly)) return
         p.equippedSkin = id
         save()
         if (!isGuest && G.net.online) api.post("/api/shop/equip-skin", JSONObject().put("skinId", id)) { r ->

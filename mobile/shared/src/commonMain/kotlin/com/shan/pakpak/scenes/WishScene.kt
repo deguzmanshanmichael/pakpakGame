@@ -68,8 +68,8 @@ class WishScene : UiScene("Hiling ni Tala") {
         g.text("FEATURED MEGABIRD", x + 6, cy + 6, Pal.GOLD)
         if (featured != null) {
             val bob = (sin(G.time * 3f) * 3f)
-            g.disc(x + ww / 2f, cy + 54f + bob, 26f + sin(G.time * 4f) * 2f, g.alpha(featured.aura, 0.3f))
-            g.bitmapCentered(Sprites.bird(featured.skin, ((G.time * 8).toInt() % 3)), x + ww / 2f, cy + 54f + bob, 4)
+            g.disc(x + ww / 2f, cy + 54f + bob, 30f + sin(G.time * 4f) * 2f, g.alpha(featured.aura, 0.18f))
+            com.shan.pakpak.gfx.drawMegabird(g, featured, x + ww / 2f, cy + 52f + bob, 3, G.time)
             g.textCenter(featured.name.uppercase(), x + ww / 2, cy + 84, Pal.WHITE, 1, outline = true)
             g.textCenter("Power: ${featured.powerName}", x + ww / 2, cy + 95, featured.aura)
         }
@@ -136,65 +136,148 @@ class WishScene : UiScene("Hiling ni Tala") {
         }
     }
 
+    private val STAGGER = 0.09f
+    private val REVEAL_AT = 1.4f
+
     private fun drawReveal(g: Gfx, ui: Ui, res: List<WishEntry>) {
         g.rect(0, 0, g.w, g.h, Color.rgb(12, 10, 36))
         for (i in 0 until 50) {
             val sx = (i * 97) % g.w
             val sy = (i * 61 + (G.time * 20).toInt()) % g.h
-            g.rect(sx, sy, 1, 1, g.alpha(Color.WHITE, 0.6f))
+            g.rect(sx, sy, 1, 1, g.alpha(Color.WHITE, 0.4f + 0.3f * sin(G.time * 2f + i)))
         }
-        if (revealT < 1.4f) {
+        if (revealT < REVEAL_AT) {
             // A star falls from the sky in the color of the best prize.
-            val t = (revealT / 1.4f)
+            val t = revealT / REVEAL_AT
             val sx = g.w * (0.8f - 0.5f * t)
             val sy = g.h * (0.05f + 0.45f * t)
             val c = tierColor(bestTier)
             for (k in 0 until 12) g.disc(sx + k * 3f, sy - k * 4f, 6f - k * 0.4f, g.alpha(c, 0.5f - k * 0.04f))
             g.disc(sx, sy, 7f, c)
             g.textCenter("Tala is listening...", g.w / 2, g.h - 60, Pal.CREAM)
-            if (ui.tapped(0, 0, g.w, g.h)) revealT = 1.4f
+            if (ui.tapped(0, 0, g.w, g.h)) revealT = REVEAL_AT
             fx.draw(g)
             return
         }
-        g.textCenter(if (bestTier == 5) "MEGABIRD!" else "Your wishes", g.w / 2, 30, tierColor(bestTier), 2, outline = true)
-        val cell = 44
-        val cols = if (res.size == 1) 1 else 2
-        val totalW = cols * (g.w / 2 - 12)
-        val startX = (g.w - totalW) / 2
-        var row = 0
-        for ((i, e) in res.withIndex()) {
-            val col = i % cols
-            row = i / cols
-            val ex = startX + col * (g.w / 2 - 12)
-            val ey = 60 + row * (cell + 6)
-            val bw = g.w / 2 - 16
-            g.box(ex, ey, if (cols == 1) g.w - 2 * startX else bw, cell, Color.rgb(30, 26, 60), tierColor(e.tier))
-            drawPrizeIcon(g, e, ex + 4, ey + 4, 36)
-            val tx = ex + 44
-            g.text("${"*".repeat(e.tier)}", tx, ey + 5, tierColor(e.tier))
-            g.text(e.name.take(14), tx, ey + 16, Pal.WHITE)
-            val sub = when {
-                e.duplicate -> "dupe: +${e.amount}c"
-                e.type == "megabird" && e.featured -> "featured!"
-                e.type == "megabird" -> "lost 50/50"
-                e.type == "collectible" -> G.catalog.byId[e.id ?: ""]?.rarity?.label ?: ""
-                else -> ""
+        val title = when (bestTier) { 5 -> "MEGABIRD!"; 4 -> "Nice pull!"; else -> "Your wishes" }
+        // Below the page header bar.
+        g.textCenter(title, g.w / 2, HEADER_H + 8, tierColor(bestTier), 2, outline = true)
+        g.textCenter("${res.size} wish${if (res.size > 1) "es" else ""}", g.w / 2, HEADER_H + 28, Pal.CREAM)
+
+        val shownAll = revealT >= REVEAL_AT + STAGGER * res.size + 0.2f
+        val top = HEADER_H + 42
+        val buttonH = 22
+        val bottomPad = 10
+        if (res.size == 1) {
+            val cw = (g.w - 40).coerceAtMost(160)
+            val ch = 124
+            drawCard(g, res[0], (g.w - cw) / 2, top + 10, cw, ch, appear(0), big = true)
+        } else {
+            val cols = 2
+            val rows = (res.size + cols - 1) / cols
+            val gap = 5
+            val cw = (g.w - 16 - gap) / cols
+            val avail = g.h - top - buttonH - bottomPad - 8
+            val ch = ((avail - gap * (rows - 1)) / rows).coerceIn(44, 72)
+            val gridW = cw * cols + gap
+            val gx = (g.w - gridW) / 2
+            for ((i, e) in res.withIndex()) {
+                drawCard(g, e, gx + (i % cols) * (cw + gap), top + (i / cols) * (ch + gap), cw, ch, appear(i), big = false)
             }
-            g.text(sub, tx, ey + 27, Pal.CREAM)
         }
         fx.draw(g)
-        val by = (60 + (row + 1) * (cell + 6) + 10).coerceAtMost(g.h - 30)
-        if (ui.button(20, by, g.w - 40, 22, "OK", Style.PRIMARY)) results = null
+        val by = g.h - buttonH - bottomPad
+        if (!shownAll) {
+            g.textCenter("Tap to reveal all", g.w / 2, by + 7, Pal.MUTED)
+            if (ui.tapped(0, 0, g.w, g.h)) revealT = REVEAL_AT + STAGGER * res.size + 0.2f
+        } else if (ui.button(20, by, g.w - 40, buttonH, "OK", Style.PRIMARY)) results = null
     }
 
-    private fun drawPrizeIcon(g: Gfx, e: WishEntry, x: Int, y: Int, size: Int) {
+    /** 0..1 pop-in progress for card [i] (staggered). */
+    private fun appear(i: Int): Float = ((revealT - REVEAL_AT - i * STAGGER) / 0.18f).coerceIn(0f, 1f)
+
+    private fun drawCard(g: Gfx, e: WishEntry, x: Int, y: Int, w: Int, h: Int, t: Float, big: Boolean) {
+        if (t <= 0f) {
+            // Face-down card waiting to flip.
+            g.box(x, y, w, h, Color.rgb(36, 30, 70), Color.rgb(70, 60, 120))
+            g.textCenter("?", x + w / 2, y + h / 2 - 3, Color.rgb(110, 100, 160))
+            return
+        }
+        // Flip/pop: the card grows from a thin vertical strip to full width.
+        val ease = 1f - (1f - t) * (1f - t)
+        val cwNow = (w * ease).toInt().coerceAtLeast(2)
+        val cxNow = x + (w - cwNow) / 2
+        val tc = tierColor(e.tier)
+        if (e.tier == 5) g.disc(x + w / 2f, y + h / 2f, (h / 2f + 6f + sin(G.time * 5f) * 2f), g.alpha(Pal.GOLD, 0.18f))
+        g.box(cxNow, y, cwNow, h, darken(tc, 0.22f), tc)
+        g.rect(cxNow + 1, y + 1, cwNow - 2, 3, tc)
+        if (e.tier >= 4) {
+            // Shimmer sweeping across 4- and 5-star cards.
+            val sweep = ((G.time * 60f).toInt() % (w + h)) - h
+            for (k in 0 until h - 2) { val xx = cxNow + sweep + k; if (xx in cxNow + 1 until cxNow + cwNow - 1) g.rect(xx, y + h - 2 - k, 1, 1, g.alpha(Color.WHITE, 0.25f)) }
+        }
+        if (t < 0.6f) return // contents appear once the card is mostly open
+
+        val cx = x + w / 2
+        val iconBox = if (big) 64 else (h * 0.42f).toInt().coerceIn(18, 30)
+        var cy = y + 6
+        drawPrizeIcon(g, e, cx - iconBox / 2, cy, iconBox, big)
+        cy += iconBox + 3
+        drawStars(g, cx, cy, e.tier)
+        cy += 8
+        val maxLines = if (big || h >= 64) 2 else 1
+        val lines = fitLines(e.name, w - 8, maxLines)
+        for (l in lines) { g.textCenter(l, cx, cy, Pal.WHITE); cy += 9 }
+        val sub = when {
+            e.duplicate -> "Dupe: +${e.amount}c"
+            e.type == "megabird" && e.featured -> "Featured!"
+            e.type == "megabird" -> "Lost 50/50"
+            e.type == "skin" -> "New skin"
+            e.type == "collectible" -> G.catalog.byId[e.id ?: ""]?.rarity?.label ?: ""
+            else -> ""
+        }
+        if (sub.isNotEmpty() && cy + 7 <= y + h - 2) {
+            val subColor = if (e.type == "collectible") G.catalog.byId[e.id ?: ""]?.rarity?.color ?: Pal.CREAM else Pal.CREAM
+            g.textCenter(fitLines(sub, w - 8, 1).first(), cx, cy, subColor)
+        }
+    }
+
+    /** Wraps [text] to at most [maxLines], ending with "..." if it doesn't fit. */
+    private fun fitLines(text: String, maxW: Int, maxLines: Int): List<String> {
+        val lines = com.shan.pakpak.gfx.PixelFont.wrap(text, maxW)
+        if (lines.size <= maxLines) return lines
+        val kept = lines.take(maxLines).toMutableList()
+        var last = kept.last()
+        while (last.isNotEmpty() && com.shan.pakpak.gfx.PixelFont.width("$last...") > maxW) last = last.dropLast(1)
+        kept[kept.size - 1] = "$last..."
+        return kept
+    }
+
+    /** A row of small pixel stars in the tier color, centered on [cx]. */
+    private fun drawStars(g: Gfx, cx: Int, y: Int, tier: Int) {
+        val c = tierColor(tier)
+        val star = arrayOf("..#..", ".###.", "#####", ".###.", ".#.#.")
+        val total = tier * 6 - 1
+        var sx = cx - total / 2
+        repeat(tier) {
+            for ((ry, row) in star.withIndex()) for ((rx, ch) in row.withIndex()) if (ch == '#') g.rect(sx + rx, y + ry, 1, 1, c)
+            sx += 6
+        }
+    }
+
+    private fun drawPrizeIcon(g: Gfx, e: WishEntry, x: Int, y: Int, size: Int, big: Boolean = false) {
+        val cx = x + size / 2f
+        val cy = y + size / 2f
         when (e.type) {
-            "megabird" -> G.config.megabird(e.id)?.let { m ->
-                g.disc(x + size / 2f, y + size / 2f, size / 2f, g.alpha(m.aura, 0.35f))
-                g.bitmapCentered(Sprites.bird(m.skin, 1), x + size / 2f, y + size / 2f, 2)
+            "megabird" -> G.config.megabird(e.id)?.let { m -> com.shan.pakpak.gfx.drawMegabird(g, m, cx, cy, if (big) 3 else 1, G.time) }
+            "skin" -> G.config.skins.firstOrNull { it.id == e.id }?.let {
+                g.disc(cx, cy, size / 2f - 1f, g.alpha(Color.WHITE, 0.08f))
+                g.bitmapCentered(Sprites.bird(it, ((G.time * 8).toInt()) % 3), cx, cy, if (big) 4 else (size / 14).coerceIn(1, 2))
             }
-            "skin" -> G.config.skins.firstOrNull { it.id == e.id }?.let { g.bitmapCentered(Sprites.bird(it, 1), x + size / 2f, y + size / 2f, 2) }
-            "coins" -> g.bitmapCentered(Sprites.coinSmall, x + size / 2f, y + size / 2f, 3)
+            "coins" -> {
+                g.disc(cx, cy, size / 2f - 1f, g.alpha(Pal.GOLD, 0.12f))
+                g.bitmapCentered(Sprites.coin[((G.time * 6).toInt()) % 2], cx, cy, if (big) 6 else (size / 9).coerceIn(2, 3))
+            }
             else -> G.catalog.byId[e.id ?: ""]?.let { itemCell(g, it, true, x, y, size) }
         }
     }
@@ -277,20 +360,23 @@ class MegabirdScene : UiScene("Megabirds") {
             g.box(x, ry, w - 3, rowH - 4, if (selected) Pal.CREAM else Pal.PAPER, if (selected) Pal.ORANGE else Pal.PAPER_DARK)
             val skinToDraw = m?.skin ?: skin(p.equippedSkin)
             val cyb = ry + (rowH - 4) / 2f
-            if (m != null && owned) g.disc(x + 18f, cyb, 15f + sin(G.time * 4f + i) * 1.5f, g.alpha(m.aura, 0.3f))
-            if (owned) g.bitmapCentered(Sprites.bird(skinToDraw, ((G.time * 8).toInt() + i) % 3), x + 18f, cyb, 2)
-            else {
-                g.bitmapCentered(Sprites.bird(skinToDraw, 1), x + 18f, cyb, 2, 60)
-                g.textCenter("?", x + 18, cyb.toInt() - 4, Pal.MUTED)
+            val iconX = x + 24f
+            when {
+                m == null -> g.bitmapCentered(Sprites.bird(skinToDraw, ((G.time * 8).toInt() + i) % 3), iconX, cyb, 2)
+                owned -> com.shan.pakpak.gfx.drawMegabird(g, m, iconX, cyb, 2, G.time, i)
+                else -> {
+                    g.bitmapCentered(com.shan.pakpak.gfx.MegaSprites.frame(m, 1, 0), iconX, cyb, 2, 55)
+                    g.textCenter("?", iconX.toInt(), cyb.toInt() - 4, Pal.MUTED)
+                }
             }
-            val tx = x + 38
+            val tx = x + 50
             if (m == null) {
                 g.text("Classic bird", tx, ry + 4, Pal.INK)
-                g.paragraph("Your skin. Counts for medals and the leaderboard.", tx, ry + 15, w - 3 - 38 - 54, Pal.MUTED, 9)
+                g.paragraph("Your skin. Counts for medals and the leaderboard.", tx, ry + 15, w - 3 - 50 - 54, Pal.MUTED, 9)
             } else {
                 g.text(m.name, tx, ry + 4, if (owned) Pal.INK else Pal.MUTED)
                 g.text(m.powerName, tx, ry + 13, darken(m.aura, 0.7f))
-                g.paragraph(m.desc, tx, ry + 23, w - 3 - 38 - 54, Pal.MUTED, 8)
+                g.paragraph(m.desc, tx, ry + 23, w - 3 - 50 - 54, Pal.MUTED, 8)
             }
             val bx = x + w - 56
             when {

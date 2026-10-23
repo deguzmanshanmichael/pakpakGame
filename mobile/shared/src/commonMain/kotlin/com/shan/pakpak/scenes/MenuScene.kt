@@ -46,7 +46,9 @@ class MenuScene : Scene() {
         val free = g.h - 44 - 40 - blockH
         val titleY = if (compact) 56 else 64 + (free / 2).coerceIn(0, 80)
         val bob = sin(G.time * 5f) * 3f
-        g.bitmapCentered(Sprites.bird(skin(p.equippedSkin), ((G.time * 9).toInt() % 3)), g.w / 2f + 58, titleY - 6 + bob, 2)
+        val titleMega = G.config.megabird(p.selectedMegabird)?.takeIf { p.megabirds.contains(it.id) }
+        if (titleMega != null) com.shan.pakpak.gfx.drawMegabird(g, titleMega, g.w / 2f + 60, titleY - 6 + bob, 2, G.time)
+        else g.bitmapCentered(Sprites.bird(skin(p.equippedSkin), ((G.time * 9).toInt() % 3)), g.w / 2f + 58, titleY - 6 + bob, 2)
         g.textCenter("PAKPAK", g.w / 2 - 10, titleY - 10, Pal.GOLD, 3, outline = true)
         g.textCenter("Lipad, lods! Tap to flap.", g.w / 2, titleY + 16, Pal.CREAM, shadow = true)
 

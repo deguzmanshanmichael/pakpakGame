@@ -40,28 +40,23 @@ class MessagesScene : UiScene("Messages") {
         if (!G.account.signedIn) { G.scenes.pop(); return }
         val (x, y, w, h) = page(g, ui).toList()
         if (errorLine(g, x, y, w) > 0) return
-        g.paragraph("Chat with friends. Be kind, and never share personal info like your address, school or phone number.", x, y, w, Pal.MUTED)
-        val listY = y + 24
+        val introH = g.paragraph("Chat with friends. Be kind, and never share personal info like your address, school or phone number.", x, y, w, Pal.MUTED)
+        val listY = y + introH + 4
         if (convs.isEmpty()) {
             g.paragraph("No conversations yet. Open a friend's profile and tap Message.", x, listY, w, Pal.INK)
             if (ui.button(x, listY + 30, w, 18, "Go to Friends", Style.BLUE)) G.scenes.replace(FriendsScene())
             return
         }
-        val rowH = 30
-        val off = ui.beginScroll("convs", x, listY, w, h - 24, convs.size * rowH)
+        val rowH = 36
+        val off = ui.beginScroll("convs", x, listY, w, y + h - listY, convs.size * (rowH + 3))
         for ((i, c) in convs.withIndex()) {
-            val ry = listY + i * rowH - off
+            val ry = listY + i * (rowH + 3) - off
             val u = c.getJSONObject("user")
             val unread = c.optInt("unread")
-            g.box(x, ry, w - 3, rowH - 3, if (unread > 0) Pal.CREAM else Pal.PAPER, Pal.PAPER_DARK)
-            g.bitmap(Sprites.bird(skin(u.optString("avatar", "pakpak")), 1), x + 3, ry + 7)
-            g.rect(x + 22, ry + 4, 3, 3, statusColor(u.optString("status")))
-            g.text(u.optString("username"), x + 28, ry + 4, Pal.INK)
-            g.textRight(formatAgo(c.optLong("updatedAt")), x + w - 8, ry + 4, Pal.MUTED)
             val last = (if (c.optBoolean("lastFromMe")) "You: " else "") + c.optString("lastMessage").replace('\n', ' ')
-            g.text(PixelFont.wrap(last, w - 60).firstOrNull()?.let { if (it.length < last.length) "$it..." else it } ?: "", x + 28, ry + 15, Pal.MUTED)
-            if (unread > 0) { g.box(x + w - 22, ry + 14, 16, 10, Pal.RED, Pal.INK); g.textCenter("$unread", x + w - 14, ry + 15, Pal.WHITE) }
-            if (ui.tapped(x, ry, w, rowH - 3)) G.scenes.push(ChatScene(u.getLong("id"), u.optString("username")))
+            val tapped = personRow(g, ui, x, ry, w - 3, rowH, u.optString("avatar", "pakpak"), u.optString("username"), u.optString("status"),
+                last, formatAgo(c.optLong("updatedAt")), highlight = unread > 0, badge = unread)
+            if (tapped && u.optLong("id") > 0) G.scenes.push(ChatScene(u.optLong("id"), u.optString("username")))
         }
         ui.endScroll()
     }

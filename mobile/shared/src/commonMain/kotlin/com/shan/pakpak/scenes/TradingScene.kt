@@ -72,23 +72,36 @@ class TradingScene : UiScene("Trading") {
 
     private fun list(g: Gfx, ui: Ui, trades: List<JSONObject>, x: Int, y: Int, w: Int, h: Int, empty: String) {
         if (trades.isEmpty()) { g.paragraph(empty, x, y, w, Pal.MUTED); return }
-        val rowH = 30
-        val off = ui.beginScroll("trades$tab", x, y, w, h, trades.size * rowH)
+        val rowH = 50
+        val off = ui.beginScroll("trades$tab", x, y, w, h, trades.size * (rowH + 3))
         for ((i, t) in trades.withIndex()) {
-            val ry = y + i * rowH - off
+            val ry = y + i * (rowH + 3) - off
             val mine = t.optString("mySide")
             val other = t.getJSONObject(if (mine == "proposer") "recipient" else "proposer")
             val status = t.optString("status")
-            val sub = when {
-                status == "open" && needsMe(t) -> "waiting for YOUR confirmation"
-                status == "open" -> "waiting for ${other.optString("username")}"
-                status == "failed" -> "failed: ${t.optString("failReason")}"
-                else -> status
+            val (label, color) = when {
+                status == "open" && needsMe(t) -> "Your turn" to Pal.ORANGE
+                status == "open" -> "Waiting" to Pal.BLUE
+                status == "completed" -> "Done" to Pal.GREEN_DARK
+                status == "failed" -> "Failed" to Pal.RED
+                else -> status.replaceFirstChar { it.uppercase() } to Pal.GRAY_DARK
             }
-            g.box(x, ry, w - 3, rowH - 3, if (needsMe(t)) Pal.CREAM else Pal.PAPER, Pal.PAPER_DARK)
-            g.text("#${t.optLong("id")} with ${other.optString("username")}", x + 4, ry + 4, Pal.INK)
-            g.text(sub.take(38), x + 4, ry + 15, if (needsMe(t)) Pal.ORANGE_DARK else Pal.MUTED)
-            if (ui.tapped(x, ry, w, rowH - 3)) G.scenes.push(TradeDetailScene(t))
+            val rw = w - 3
+            g.box(x, ry, rw, rowH, if (needsMe(t)) Pal.CREAM else Pal.PAPER, if (needsMe(t)) Pal.ORANGE else Pal.PAPER_DARK)
+            g.text(fitText("with ${other.optString("username")}", rw - 70), x + 5, ry + 4, Pal.INK)
+            val pw = com.shan.pakpak.gfx.PixelFont.width(label) + 8
+            pill(g, x + rw - pw - 4, ry + 3, label, color)
+            // Item previews: what you give -> what you get.
+            val give = linesOf(t.optJSONArray(if (mine == "proposer") "proposerGives" else "recipientGives"))
+            val get = linesOf(t.optJSONArray(if (mine == "proposer") "recipientGives" else "proposerGives"))
+            var ix = x + 5
+            val iy = ry + 16
+            for (l in give.take(3)) { G.catalog.byId[l.first]?.let { itemCell(g, it, true, ix, iy, 20, l.second) }; ix += 22 }
+            if (give.size > 3) { g.text("+${give.size - 3}", ix, iy + 7, Pal.MUTED); ix += 16 }
+            g.text("->", ix + 2, iy + 7, Pal.ORANGE_DARK); ix += 16
+            for (l in get.take(3)) { G.catalog.byId[l.first]?.let { itemCell(g, it, true, ix, iy, 20, l.second) }; ix += 22 }
+            if (get.size > 3) g.text("+${get.size - 3}", ix, iy + 7, Pal.MUTED)
+            if (ui.tapped(x, ry, rw, rowH)) G.scenes.push(TradeDetailScene(t))
         }
         ui.endScroll()
     }
@@ -97,10 +110,11 @@ class TradingScene : UiScene("Trading") {
         g.paragraph("Pick a friend to trade with. You can trade tradeable items only; account-bound items (earned rewards, Celestials, imported guest items) stay with you.", x, y, w, Pal.MUTED)
         val ly = y + 44
         if (friends.isEmpty()) { g.paragraph("Add friends first to trade.", x, ly, w, Pal.INK); return }
-        val off = ui.beginScroll("tradefriends", x, ly, w, h - 44, friends.size * 24)
+        val off = ui.beginScroll("tradefriends", x, ly, w, h - 44, friends.size * 35)
         for ((i, f) in friends.withIndex()) {
-            val ry = ly + i * 24 - off
-            if (ui.button(x, ry, w - 4, 20, f.optString("username"), Style.PLAIN)) G.scenes.push(TradeComposeScene(f.getLong("id"), f.optString("username")))
+            val ry = ly + i * 35 - off
+            val tapped = personRow(g, ui, x, ry, w - 4, 32, f.optString("avatar", "pakpak"), f.optString("username"), f.optString("status"), "tap to pick items")
+            if (tapped && f.optLong("id") > 0) G.scenes.push(TradeComposeScene(f.optLong("id"), f.optString("username")))
         }
         ui.endScroll()
     }
@@ -128,8 +142,15 @@ class TradeDetailScene(private var trade: JSONObject) : UiScene("Trade #${trade.
         if (t.optString("note").isNotBlank()) cy += g.paragraph("Note: ${t.optString("note")}", x, cy, w, Pal.MUTED) + 2
         cy += drawSide(g, ui, "You give", iGive, x, cy, w) + 6
         cy += drawSide(g, ui, "You get", iGet, x, cy, w) + 8
-        g.text("${me.optString("username")} (you): ${if (me.optBoolean("confirmed")) "CONFIRMED" else "not confirmed"}", x, cy, if (me.optBoolean("confirmed")) Pal.GREEN_DARK else Pal.MUTED); cy += 10
-        g.text("${other.optString("username")}: ${if (other.optBoolean("confirmed")) "CONFIRMED" else "not confirmed"}", x, cy, if (other.optBoolean("confirmed")) Pal.GREEN_DARK else Pal.MUTED); cy += 14
+        for ((who, side) in listOf("You" to me, other.optString("username") to other)) {
+            val done = side.optBoolean("confirmed")
+            g.box(x, cy, w, 16, Pal.PAPER, Pal.PAPER_DARK)
+            g.text(fitText(who, w - 80), x + 4, cy + 5, Pal.INK)
+            val label = if (done) "Confirmed" else "Not yet"
+            pill(g, x + w - com.shan.pakpak.gfx.PixelFont.width(label) - 12, cy + 2, label, if (done) Pal.GREEN_DARK else Pal.GRAY_DARK)
+            cy += 18
+        }
+        cy += 4
         if (t.optString("status") == "failed") cy += g.paragraph("Failed: ${t.optString("failReason")}. No items moved.", x, cy, w, Pal.RED_DARK)
         if (t.optString("status") == "completed") cy += g.paragraph("Done! Items were swapped by the server.", x, cy, w, Pal.GREEN_DARK)
         errorLine(g, x, cy, w)
@@ -181,14 +202,14 @@ class TradeComposeScene(private val friendId: Long, private val friendName: Stri
         val (x, y, w, h) = page(g, ui).toList()
         side = ui.tabs(x, y, w, listOf("You give (${give.values.sum()})", "You want (${want.values.sum()})"), side)
         var cy = y + 18
-        g.text(if (side == 0) "Tap your items to offer them" else "Tap $friendName's items to ask", x, cy, Pal.MUTED)
+        g.text(fitText(if (side == 0) "Tap your items to offer" else "Tap their items to ask for", w), x, cy, Pal.MUTED)
         cy += 12
         val inv = if (side == 0) mine else theirs
         val sel = if (side == 0) give else want
         val ids = inv.keys.sortedWith(compareByDescending<String> { G.catalog.byId[it]?.rarity?.ordinal ?: 0 }.thenBy { it })
         val cell = 30
         val cols = (w / (cell + 3)).coerceAtLeast(1)
-        val listH = h - (cy - y) - 26
+        val listH = h - (cy - y) - 26 - 24
         if (ids.isEmpty() && !loading) g.paragraph(if (side == 0) "You have no tradeable items yet." else "$friendName has no tradeable items.", x, cy, w, Pal.INK)
         val off = ui.beginScroll("compose$side", x, cy, w, listH, ((ids.size + cols - 1) / cols) * (cell + 3))
         for ((i, id) in ids.withIndex()) {
@@ -206,6 +227,15 @@ class TradeComposeScene(private val friendId: Long, private val friendName: Stri
             }
         }
         ui.endScroll()
+        // Summary of the offer so far.
+        val sy = y + h - 20 - 24
+        g.box(x, sy, w, 22, Pal.CREAM, Pal.PAPER_DARK)
+        val summary = "Give ${give.values.sum()}  ->  Get ${want.values.sum()}"
+        g.textCenter(summary, x + w / 2, sy + 4, Pal.INK)
+        val giveNames = give.keys.mapNotNull { G.catalog.byId[it]?.name }.joinToString(", ").ifEmpty { "?" }
+        val wantNames = want.keys.mapNotNull { G.catalog.byId[it]?.name }.joinToString(", ").ifEmpty { "?" }
+        val detail = if (give.isEmpty() && want.isEmpty()) "Nothing picked yet" else "$giveNames for $wantNames"
+        g.textCenter(fitText(detail, w - 8), x + w / 2, sy + 13, Pal.MUTED)
         val ok = give.isNotEmpty() && want.isNotEmpty() && !busy
         if (ui.button(x, y + h - 20, w, 20, if (ok) "Review offer" else "Pick items on both sides", Style.PRIMARY, ok)) review()
     }

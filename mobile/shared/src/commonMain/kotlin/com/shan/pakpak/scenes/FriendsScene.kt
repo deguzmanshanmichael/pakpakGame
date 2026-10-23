@@ -4,6 +4,7 @@ import com.shan.pakpak.Field
 import com.shan.pakpak.G
 import com.shan.pakpak.engine.Modal
 import com.shan.pakpak.engine.ModalButton
+import com.shan.pakpak.gfx.Color
 import com.shan.pakpak.gfx.Gfx
 import com.shan.pakpak.gfx.Pal
 import com.shan.pakpak.gfx.Sprites
@@ -70,14 +71,21 @@ class FriendsScene : UiScene("Friends") {
 
     private fun friendList(g: Gfx, ui: Ui, x: Int, y: Int, w: Int, h: Int) {
         if (friends.isEmpty()) {
-            g.paragraph("No friends yet. Use Find to search by username or Player ID (like PK-AB12CD).", x, y, w, Pal.MUTED)
+            g.paragraph("No friends yet. Tap Find to search by username or Player ID (like PK-AB12CD), or share your own ID from Profile.", x, y, w, Pal.MUTED)
+            if (ui.button(x, y + 40, w, 20, "Find players", Style.BLUE)) tab = 2
             return
         }
-        val off = ui.beginScroll("friends", x, y, w, h, friends.size * 27)
+        val online = friends.count { it.optString("status") == "online" }
+        g.text("$online online - tap to chat or trade", x, y, Pal.MUTED)
+        val rowH = 36
+        val listY = y + 12
+        val off = ui.beginScroll("friends", x, listY, w, h - 12, friends.size * (rowH + 3))
         for ((i, f) in friends.withIndex()) {
+            val id = f.optLong("id")
             val st = f.optString("status")
-            val label = when (st) { "online" -> "online"; "recent" -> "active today"; else -> "offline" }
-            if (row(g, ui, f, x, y + i * 27 - off, w - 3, "$label  |  best ${f.optInt("bestScore")}")) G.scenes.push(PlayerScene(f.getLong("id")))
+            val tapped = personRow(g, ui, x, listY + i * (rowH + 3) - off, w - 3, rowH, f.optString("avatar", "pakpak"), f.optString("username"),
+                st, statusLabel(st), "best ${f.optInt("bestScore")}", highlight = st == "online")
+            if (tapped && id > 0) G.scenes.push(PlayerScene(id))
         }
         ui.endScroll()
     }
@@ -87,24 +95,22 @@ class FriendsScene : UiScene("Friends") {
         g.text("Incoming", x, cy, Pal.ORANGE_DARK); cy += 12
         if (incoming.isEmpty()) { g.text("None", x, cy, Pal.MUTED); cy += 12 }
         for (r in incoming) {
-            g.box(x, cy, w, 24, Pal.CREAM, Pal.PAPER_DARK)
-            g.bitmap(Sprites.bird(skin(r.optString("avatar", "pakpak")), 1), x + 3, cy + 6)
-            g.text(r.optString("username"), x + 24, cy + 8, Pal.INK)
-            if (ui.button(x + w - 76, cy + 3, 36, 18, "Yes", Style.GREEN)) respond(r.getLong("id"), true)
-            if (ui.button(x + w - 38, cy + 3, 34, 18, "No", Style.RED)) respond(r.getLong("id"), false)
-            cy += 27
+            personRow(g, ui, x, cy, w, 32, r.optString("avatar", "pakpak"), r.optString("username"), null,
+                "wants to be friends", chevron = false, highlight = true)
+            if (ui.button(x + w - 84, cy + 7, 40, 18, "Accept", Style.GREEN)) respond(r.optLong("id"), true)
+            if (ui.button(x + w - 42, cy + 7, 38, 18, "No", Style.PLAIN)) respond(r.optLong("id"), false)
+            cy += 35
             if (cy > y + h - 60) break
         }
         cy += 6
         g.text("Sent", x, cy, Pal.ORANGE_DARK); cy += 12
         if (outgoing.isEmpty()) g.text("None", x, cy, Pal.MUTED)
         for (r in outgoing) {
-            g.box(x, cy, w, 22, Pal.PAPER, Pal.PAPER_DARK)
-            g.text(r.optString("username"), x + 6, cy + 7, Pal.INK)
-            if (ui.button(x + w - 56, cy + 2, 52, 18, "Cancel", Style.PLAIN)) {
-                G.api.delete("/api/friends/requests/${r.getLong("id")}") { load() }
+            personRow(g, ui, x, cy, w, 28, r.optString("avatar", "pakpak"), r.optString("username"), null, "request sent", chevron = false)
+            if (ui.button(x + w - 54, cy + 5, 50, 18, "Cancel", Style.PLAIN)) {
+                G.api.delete("/api/friends/requests/${r.optLong("id")}") { load() }
             }
-            cy += 25
+            cy += 31
             if (cy > y + h - 24) break
         }
     }
@@ -134,10 +140,13 @@ class FriendsScene : UiScene("Friends") {
         cy += 14
         val list = results ?: return
         if (list.isEmpty()) { g.text("No players found.", x, cy, Pal.MUTED); return }
-        val off = ui.beginScroll("search", x, cy, w, y + h - cy, list.size * 27)
+        val off = ui.beginScroll("search", x, cy, w, y + h - cy, list.size * 39)
         for ((i, u) in list.withIndex()) {
-            val ry = cy + i * 27 - off
-            if (row(g, ui, u, x, ry, w - 3, if (u.optBoolean("friend")) "already friends" else u.optString("playerCode"))) G.scenes.push(PlayerScene(u.getLong("id")))
+            val ry = cy + i * 39 - off
+            val st = u.optString("status")
+            val tapped = personRow(g, ui, x, ry, w - 3, 36, u.optString("avatar", "pakpak"), u.optString("username"), st,
+                if (u.optBoolean("friend")) "already friends" else u.optString("playerCode"))
+            if (tapped && u.optLong("id") > 0) G.scenes.push(PlayerScene(u.optLong("id")))
         }
         ui.endScroll()
     }
@@ -163,29 +172,49 @@ class PlayerScene(private val userId: Long) : UiScene("Player") {
         val d = data ?: return
         val self = userId == G.account.profile.userId
         var cy = y
-        g.bitmap(Sprites.bird(skin(d.optString("avatar", "pakpak")), ((G.time * 8).toInt() % 3)), x, cy, 2)
-        g.text(d.optString("username"), x + 40, cy + 2, Pal.INK, 2)
+        // Header card
+        g.box(x, cy, w, 52, Color.rgb(94, 170, 230), Pal.INK)
+        g.disc(x + 26f, cy + 26f, 20f, g.alpha(Color.WHITE, 0.25f))
+        g.bitmapCentered(Sprites.bird(skin(d.optString("avatar", "pakpak")), ((G.time * 8).toInt() % 3)), x + 26f, cy + 26f, 2)
+        g.textShadow(fitText(d.optString("username"), w - 60), x + 52, cy + 8, Pal.WHITE)
         val st = d.optString("status")
-        g.rect(x + 40, cy + 20, 4, 4, statusColor(st))
-        g.text("${st.ifEmpty { "offline" }}  ${d.optString("playerCode")}", x + 47, cy + 19, Pal.MUTED)
-        cy += 34
+        var px = x + 52
+        px += pill(g, px, cy + 20, statusLabel(st), darken(statusColor(st), 0.8f)) + 3
+        if (d.optBoolean("friend")) pill(g, px, cy + 20, "Friend", Pal.GREEN_DARK)
+        g.text(d.optString("playerCode"), x + 52, cy + 36, Pal.CREAM)
+        cy += 58
         if (d.optBoolean("visible")) {
             d.optString("bio").takeIf { it.isNotBlank() }?.let { cy += g.paragraph("\"$it\"", x, cy, w, Pal.INK) + 4 }
             val s = d.getJSONObject("stats")
             val m = s.getJSONObject("medals")
-            val rows = listOf(
-                "Best score" to s.optInt("bestScore").toString(),
+            val tiles = listOf(
+                "Best" to s.optInt("bestScore").toString(),
                 "Runs" to s.optInt("totalRuns").toString(),
-                "Obstacles passed" to s.optInt("totalPipes").toString(),
-                "Adventure cleared" to "${s.optInt("adventureCompleted")}/${G.levels.levels.size}",
+                "Passed" to s.optInt("totalPipes").toString(),
+                "Adventure" to "${s.optInt("adventureCompleted")}/${G.levels.levels.size}",
                 "Collection" to "${s.optInt("collection")}/${s.optInt("collectionTotal")}",
-                "Medals B/S/G/P" to "${m.optInt("bronze")}/${m.optInt("silver")}/${m.optInt("gold")}/${m.optInt("platinum")}",
                 "Trades" to s.optInt("tradesCompleted").toString(),
-                "Achievements" to "${d.optJSONArray("achievements")?.length() ?: 0}/${G.config.achievements.size}",
             )
-            for ((k, v) in rows) { g.text(k, x, cy, Pal.MUTED); g.textRight(v, x + w, cy, Pal.INK); cy += 11 }
+            val tw = (w - 4) / 3
+            for ((i, t) in tiles.withIndex()) {
+                val tx = x + (i % 3) * (tw + 2)
+                val ty = cy + (i / 3) * 30
+                g.box(tx, ty, tw, 28, Pal.CREAM, Pal.PAPER_DARK)
+                g.textCenter(t.second, tx + tw / 2, ty + 5, Pal.INK)
+                g.textCenter(t.first, tx + tw / 2, ty + 16, Pal.MUTED)
+            }
+            cy += 62
+            g.text("Medals", x, cy + 4, Pal.MUTED)
+            val medals = listOf(m.optInt("bronze"), m.optInt("silver"), m.optInt("gold"), m.optInt("platinum"))
+            for ((i, n) in medals.withIndex()) {
+                val mx = x + 44 + i * 40
+                g.bitmap(Sprites.medal(if (n > 0) i else -1), mx, cy - 2)
+                g.text("x$n", mx + 12, cy + 4, Pal.INK)
+            }
+            cy += 18
+            g.text("Achievements ${d.optJSONArray("achievements")?.length() ?: 0}/${G.config.achievements.size}", x, cy, Pal.MUTED)
         } else {
-            cy += g.paragraph("This player's profile is private.", x, cy, w, Pal.MUTED)
+            cy += g.paragraph("This player's profile is private. You can still add them as a friend.", x, cy, w, Pal.MUTED)
         }
         if (self) return
         val friend = d.optBoolean("friend")

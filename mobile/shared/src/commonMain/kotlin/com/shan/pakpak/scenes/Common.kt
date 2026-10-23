@@ -164,6 +164,46 @@ fun formatAgo(ts: Long): String {
     }
 }
 
+/** Small rounded label, e.g. a status or "Friend" badge. Returns its width. */
+fun pill(g: Gfx, x: Int, y: Int, text: String, color: Int, textColor: Int = Pal.WHITE): Int {
+    val w = PixelFont.width(text) + 8
+    g.box(x, y, w, 11, color, darken(color, 0.6f))
+    g.text(text, x + 4, y + 2, textColor)
+    return w
+}
+
+fun statusLabel(status: String) = when (status) { "online" -> "online"; "recent" -> "active today"; else -> "offline" }
+
+/**
+ * A tappable player card: avatar, name, status dot, a subtitle, optional right-side text and a chevron.
+ * Returns true when tapped.
+ */
+fun personRow(g: Gfx, ui: Ui, x: Int, y: Int, w: Int, h: Int, avatar: String, name: String, status: String?, sub: String,
+              right: String? = null, highlight: Boolean = false, chevron: Boolean = true, badge: Int = 0): Boolean {
+    g.box(x, y, w, h, if (highlight) Pal.CREAM else Pal.PAPER, if (highlight) Pal.ORANGE else Pal.PAPER_DARK)
+    val ay = y + h / 2f
+    g.bitmapCentered(Sprites.bird(skin(avatar), 1), x + 15f, ay, 1)
+    if (status != null) { g.disc(x + 24f, ay + 6f, 3f, Pal.INK); g.disc(x + 24f, ay + 6f, 2f, statusColor(status)) }
+    val tx = x + 30
+    val rightW = (right?.let { PixelFont.width(it) + 6 } ?: 0) + (if (chevron) 10 else 0) + (if (badge > 0) 16 else 0)
+    val maxW = w - (tx - x) - rightW - 4
+    g.text(fitText(name, maxW), tx, y + h / 2 - 9, Pal.INK)
+    g.text(fitText(sub, maxW), tx, y + h / 2 + 2, Pal.MUTED)
+    var rx = x + w - 4
+    if (chevron) { rx -= 6; g.text(">", rx, y + h / 2 - 3, Pal.MUTED); rx -= 4 }
+    if (badge > 0) { rx -= 14; g.box(rx, y + h / 2 - 5, 14, 10, Pal.RED, Pal.INK); g.textCenter(if (badge > 9) "9+" else "$badge", rx + 7, y + h / 2 - 3, Pal.WHITE); rx -= 2 }
+    if (right != null) g.textRight(right, rx, y + h / 2 - 3, Pal.ORANGE_DARK)
+    return ui.tapped(x, y, w, h)
+}
+
+/** Truncates with "..." so text never runs past [maxW]. */
+fun fitText(text: String, maxW: Int): String {
+    if (PixelFont.width(text) <= maxW) return text
+    var t = text
+    while (t.isNotEmpty() && PixelFont.width("$t...") > maxW) t = t.dropLast(1)
+    return "$t..."
+}
+
 fun statusColor(status: String) = when (status) {
     "online" -> Pal.GREEN
     "recent" -> Pal.YELLOW

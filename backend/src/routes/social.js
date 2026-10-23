@@ -84,7 +84,7 @@ export function socialRoutes(r, { db, data, limiter }) {
                              JOIN users u ON u.id = fr.to_id JOIN profiles p ON p.user_id = u.id
                              WHERE fr.from_id = ? AND fr.status = 'pending' ORDER BY fr.id DESC`, user.id);
     return {
-      friends: friends.map((f) => ({ ...userCard(db, f, null), friend: true, bestScore: f.best_score })),
+      friends: await mapSeq(friends, async (f) => ({ ...(await userCard(db, f, null)), friend: true, bestScore: f.best_score })),
       incoming, outgoing,
     };
   });

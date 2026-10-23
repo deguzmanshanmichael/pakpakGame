@@ -79,8 +79,15 @@ export const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
 };
 
+// A Promise that slipped into a response (a missing `await`) would serialize as {} and silently
+// drop data. Refuse to send it so the bug surfaces as a 500 (and fails the tests) instead.
+const noPromises = (key, value) => {
+  if (value && typeof value === 'object' && typeof value.then === 'function') throw new Error(`unresolved Promise in response field "${key}"`);
+  return value;
+};
+
 export function sendJson(res, status, body) {
-  const data = JSON.stringify(body);
+  const data = JSON.stringify(body, noPromises);
   res.writeHead(status, { ...SECURITY_HEADERS, 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(data) });
   res.end(data);
 }

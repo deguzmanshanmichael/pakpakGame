@@ -196,6 +196,12 @@ test('friends, privacy and messaging safety', async () => {
   const acc = await call('POST', `/api/friends/requests/${req.body.requestId}/respond`, { accept: true }, b.token);
   assert.equal(acc.body.status, 'accepted');
   assert.equal((await call('GET', `/api/users/${b.id}/profile`, null, a.token)).body.visible, true);
+  // The friend list carries each friend's id and name (a missing await once dropped them).
+  const fl = await call('GET', '/api/friends', null, a.token);
+  assert.equal(fl.body.friends.length, 1);
+  assert.equal(fl.body.friends[0].id, b.id);
+  assert.equal(fl.body.friends[0].username, b.username);
+  assert.equal(fl.body.friends[0].friend, true);
 
   const m = await call('POST', '/api/messages', { toUserId: b.id, body: 'text me at 0917 123 4567 or me@mail.com', clientMsgId: 'msg-00000001' }, a.token);
   assert.equal(m.status, 200);

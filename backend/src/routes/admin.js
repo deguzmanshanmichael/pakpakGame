@@ -2,6 +2,7 @@
 // and every change is written to the audit log.
 import { v, bad, notFound, mapSeq } from '../http.js';
 import { audit, collectionSummary } from '../services.js';
+import { grantTesterKit } from '../testerkit.js';
 import { RARITY_ORDER } from '../rules.js';
 import { EDITABLE_SECTIONS } from '../gamedata.js';
 
@@ -221,6 +222,15 @@ export function adminRoutes(r, { db, data }) {
     await db.run('UPDATE profiles SET flagged = ?, suspicious_runs = CASE WHEN ? = 0 THEN 0 ELSE suspicious_runs END WHERE user_id = ?', flagged ? 1 : 0, flagged ? 1 : 0, id);
     await audit(db, user.id, flagged ? 'user.flag' : 'user.unflag', 'user', id, { reason });
     return { ok: true };
+  });
+
+  // Fills an admin account with coins, tokens, skins, megabirds and collectibles for testing the live app.
+  r.post('/api/admin/users/:id/tester-kit', 'admin', async ({ user, params, body }) => {
+    const id = v.id(params.id, 'id');
+    const target = await db.get('SELECT role FROM users WHERE id = ?', id);
+    if (!target) throw notFound('User not found');
+    if (target.role !== 'admin') throw bad('not_admin', 'The tester kit can only be given to admin accounts');
+    return { ok: true, granted: await grantTesterKit(db, data, id, { tradeable: body.tradeable === true, actorId: user.id }) };
   });
 
   r.get('/api/admin/audit', 'admin', async ({ query }) => {

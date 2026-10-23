@@ -31,3 +31,22 @@ test('tester kit fills an admin account and refuses regular players', async () =
   const tradeable = (await call('GET', `/api/trades/inventory/${admin.id}`, null, admin.token)).body.items;
   assert.equal(tradeable.length, 0);
 });
+
+test('admins can give the tester kit from the admin panel API', async () => {
+  const { app, call, register } = ctx;
+  const admin = await register();
+  await app.db.run("UPDATE users SET role = 'admin' WHERE id = ?", admin.id);
+  const player = await register();
+  assert.equal((await call('POST', `/api/admin/users/${admin.id}/tester-kit`, {}, player.token)).status, 403);
+  assert.equal((await call('POST', `/api/admin/users/${player.id}/tester-kit`, {}, admin.token)).status, 400);
+  const r = await call('POST', `/api/admin/users/${admin.id}/tester-kit`, { tradeable: true }, admin.token);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.granted.megabirds, app.data.cfg.megabirds.length);
+  // Tradeable kit items show up in the trade inventory, with fresh serial numbers.
+  const inv = (await call('GET', `/api/trades/inventory/${admin.id}`, null, admin.token)).body.items;
+  assert.ok(inv.length > 0);
+  const dupes = await app.db.get('SELECT COUNT(*) AS n FROM (SELECT collectible_id, serial FROM item_copies GROUP BY 1, 2 HAVING COUNT(*) > 1)');
+  assert.equal(dupes.n, 0);
+  const log = (await call('GET', '/api/admin/audit', null, admin.token)).body.entries;
+  assert.ok(log.some((e) => e.action === 'admin.tester_kit' && e.actor === admin.username));
+});

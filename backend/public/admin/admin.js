@@ -224,11 +224,21 @@ const tabs = {
             const reason = askReason(u.flagged ? 'Reason for clearing the flag:' : 'Reason for flagging:');
             if (!reason) return;
             try { await api('POST', `/api/admin/users/${u.id}/flag`, { flagged: !u.flagged, reason }); load(); } catch (e) { showError(e); }
-          } } }, u.flagged ? 'Clear flag' : 'Flag')))))));
+          } } }, u.flagged ? 'Clear flag' : 'Flag'),
+          u.role === 'admin' ? h('button', { on: { click: () => giveKit(u.id, u.username, false).then(load) } }, 'Tester kit') : null))))));
     };
     q.addEventListener('change', load);
     await load();
-    return h('div', {}, h('label', {}, 'Search ', q), list);
+    const tradeable = h('input', { type: 'checkbox' });
+    const kitMsg = h('span', { class: 'muted' });
+    const kit = h('div', { class: 'card' },
+      h('h3', {}, 'Tester kit'),
+      h('p', { class: 'muted' }, 'Gives your account 9,999,999 coins, 99,999 wish tokens, every skin, every megabird and one of every collectible, '
+        + 'so you can test the live app. It only adds what is missing, so you can use it again to top up. Reopen the app afterwards to see it.'),
+      h('label', {}, tradeable, ' Make the collectibles tradeable (to test trading; otherwise they stay out of the player economy)'),
+      h('div', { class: 'row' }, h('button', { class: 'primary', on: { click: () => giveKit(me.id, me.username, tradeable.checked, kitMsg).then(load) } },
+        'Give my account the tester kit'), kitMsg));
+    return h('div', {}, kit, h('label', {}, 'Search ', q), list);
   },
 
   async audit() {
@@ -246,7 +256,18 @@ async function setStatus(id, status) {
 }
 const suspend = (id) => setStatus(id, 'suspended');
 
+async function giveKit(id, username, tradeable, msg) {
+  if (!confirm(`Give the tester kit to ${username}?`)) return;
+  showError(null);
+  try {
+    const { granted: g } = await api('POST', `/api/admin/users/${id}/tester-kit`, { tradeable });
+    const text = `Done: +${g.coins.toLocaleString()} coins, ${g.tokens.toLocaleString()} tokens, ${g.skins} skins, ${g.megabirds} megabirds, ${g.items} collectibles added.`;
+    if (msg) { msg.textContent = text; msg.className = 'ok'; } else alert(text);
+  } catch (e) { showError(e); }
+}
+
 let current = 'overview';
+let me = null;
 async function render(tab = current) {
   current = tab;
   document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
@@ -265,6 +286,7 @@ async function enter() {
   try {
     const st = await api('GET', '/api/me/state');
     if (st.user.role !== 'admin') { logout(); $('#login-error').textContent = 'This account is not an admin.'; return; }
+    me = st.user;
     $('#who').textContent = `Signed in as ${st.user.username}`;
     $('#login-view').hidden = true; $('#app-view').hidden = false; $('#logout').hidden = false;
     render('overview');

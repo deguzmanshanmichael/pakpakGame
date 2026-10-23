@@ -44,7 +44,8 @@ DATABASE_URL="libsql://..." DATABASE_AUTH_TOKEN="..." npm run create-admin -- sh
 Then open `https://<your-service>.onrender.com/admin/` and sign in. On Windows PowerShell, set the variables first: `$env:DATABASE_URL="..."; $env:DATABASE_AUTH_TOKEN="..."; npm run create-admin -- shan`
 
 ### Tester kit for the admin account
-To test the live app with everything unlocked (9,999,999 coins, 99,999 wish tokens, every skin, every megabird and one of every collectible), run this with the same two variables set:
+Easiest: sign in at `https://<your-service>.onrender.com/admin/`, open **Users**, and press **Give my account the tester kit**. Or from your computer:
+It gives 9,999,999 coins, 99,999 wish tokens, every skin, every megabird and one of every collectible. From a terminal, with the same two variables set:
 
 ```bash
 npm run grant-tester -- shan

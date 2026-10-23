@@ -73,8 +73,9 @@ fun requireOnline(feature: String, onReady: () -> Unit) {
             "This build has no game server configured, so online features are off. Offline play still works fully.")
         G.net.state == Connectivity.State.OFFLINE -> G.scenes.alert("You're offline",
             "$feature needs an internet connection. Endless, Adventure and your collection still work offline.")
-        G.net.state == Connectivity.State.NO_SERVER -> G.scenes.alert("Server unreachable",
-            "We can't reach the PakPak server right now. Try again in a bit; your offline progress is safe.")
+        G.net.state == Connectivity.State.NO_SERVER -> G.scenes.alert("Server waking up",
+            "The PakPak server sleeps when nobody is playing and takes about a minute to wake up. " +
+                "Keep playing and try again shortly; your offline progress is safe.")
         !G.account.signedIn -> G.scenes.show(Modal("Sign in needed",
             "$feature needs a PakPak account so friends can find you and your items stay safe. Playing offline never needs an account.",
             listOf(ModalButton("Later", Style.PLAIN), ModalButton("Sign in", Style.PRIMARY) { G.scenes.push(AuthScene()) })))

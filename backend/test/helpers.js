@@ -1,8 +1,15 @@
 import { randomUUID } from 'node:crypto';
+import { rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createApp } from '../src/server.js';
 
 export async function startApp(scale = 100) {
-  const app = createApp({ DB_PATH: ':memory:', QUIET: '1', SERVER_SECRET: 'test-secret-test-secret', RATE_LIMIT_SCALE: String(scale) });
+  // Each test file gets its own throwaway SQLite file (libSQL transactions need a real file).
+  const dbFile = join(tmpdir(), `pakpak-test-${randomUUID()}.db`);
+  const app = await createApp({ DB_PATH: dbFile, QUIET: '1', SERVER_SECRET: 'test-secret-test-secret', RATE_LIMIT_SCALE: String(scale) });
+  const close = app.close;
+  app.close = async () => { await close(); for (const f of [dbFile, `${dbFile}-wal`, `${dbFile}-shm`]) { try { rmSync(f, { force: true }); } catch { /* Windows may still hold the file briefly */ } } };
   await new Promise((r) => app.server.listen(0, '127.0.0.1', r));
   const base = `http://127.0.0.1:${app.server.address().port}`;
   const call = async (method, path, body, token) => {
@@ -37,5 +44,5 @@ export async function makeFriends(call, a, b) {
 // Gives a user tradeable copies directly through the service layer (stands in for lucky capsule drops).
 export async function giveItems(app, userId, collectibleId, count, opts = { source: 'capsule' }) {
   const { issueCopy } = await import('../src/services.js');
-  app.db.tx(() => { for (let i = 0; i < count; i++) issueCopy(app.db, app.data, userId, collectibleId, opts); });
+  await app.db.tx(async () => { for (let i = 0; i < count; i++) await issueCopy(app.db, app.data, userId, collectibleId, opts); });
 }

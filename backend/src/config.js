@@ -6,7 +6,9 @@ export function loadEnv(overrides = {}) {
   const cfg = {
     port: Number(env.PORT ?? 8080),
     host: env.HOST ?? '127.0.0.1',
-    dbPath: env.DB_PATH ?? './data/pakpak.db',
+    // DATABASE_URL (e.g. libsql://pakpak-you.turso.io) wins over DB_PATH (a local SQLite file).
+    dbPath: env.DATABASE_URL || env.DB_PATH || './data/pakpak.db',
+    dbAuthToken: env.DATABASE_AUTH_TOKEN || '',
     secret: env.SERVER_SECRET ?? '',
     trustProxy: env.TRUST_PROXY === '1',
     production: env.NODE_ENV === 'production',

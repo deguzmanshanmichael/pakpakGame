@@ -15,10 +15,10 @@ import { wishRoutes } from './routes/wish.js';
 
 const PUBLIC_DIR = resolve(join(dirname(fileURLToPath(import.meta.url)), '..', 'public'));
 
-export function createApp(overrides = {}) {
+export async function createApp(overrides = {}) {
   const env = loadEnv(overrides);
-  const db = openDb(env.dbPath);
-  const data = new GameData(db);
+  const db = await openDb(env.dbPath, env.dbAuthToken);
+  const data = await GameData.create(db);
   data.secret = env.secret;
   const limiter = new RateLimiter(env.rateLimitScale);
   const ctx = { db, data, env, limiter };
@@ -31,7 +31,7 @@ export function createApp(overrides = {}) {
   wishRoutes(router, ctx);
   const sweeper = setInterval(() => {
     limiter.sweep();
-    db.run('DELETE FROM sessions WHERE expires_at < ?', Date.now());
+    db.run('DELETE FROM sessions WHERE expires_at < ?', Date.now()).catch(() => {});
   }, 10 * 60_000);
   sweeper.unref();
 
@@ -56,7 +56,7 @@ export function createApp(overrides = {}) {
       const { route, params } = m;
       let user = null;
       if (route.auth !== 'none') {
-        user = authenticate(db, req.headers.authorization);
+        user = await authenticate(db, req.headers.authorization);
         if (!user) throw new HttpError(401, 'unauthenticated', 'Please sign in first');
         if (route.auth === 'admin' && user.role !== 'admin') throw new HttpError(403, 'forbidden', 'Admins only');
       }
@@ -68,7 +68,7 @@ export function createApp(overrides = {}) {
       if (e instanceof HttpError) {
         status = e.status;
         sendJson(res, e.status, { error: e.code, message: e.message, ...(e.extra ?? {}) });
-      } else if (e?.code === 'ERR_SQLITE_ERROR' && /UNIQUE|constraint/i.test(e.message)) {
+      } else if (/UNIQUE|constraint/i.test(String(e?.message)) && /SQLITE|LibsqlError/i.test(String(e?.code ?? e?.name))) {
         status = 409;
         sendJson(res, 409, { error: 'conflict', message: 'That conflicts with existing data' });
       } else {
@@ -88,9 +88,10 @@ export function createApp(overrides = {}) {
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const app = createApp();
+  const app = await createApp();
   app.server.listen(app.env.port, app.env.host, () => {
-    console.log(`PakPak backend listening on http://${app.env.host}:${app.env.port} (db: ${app.env.dbPath})`);
+    const dbLabel = app.env.dbPath.startsWith('libsql:') ? app.env.dbPath.replace(/\?.*$/, '') : app.env.dbPath;
+    console.log(`PakPak backend listening on http://${app.env.host}:${app.env.port} (db: ${dbLabel})`);
     if (!app.env.production) console.log('Development mode: put HTTPS (e.g. Caddy) in front before going live.');
   });
   const stop = () => app.close().then(() => process.exit(0));

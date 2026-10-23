@@ -21,7 +21,7 @@ flappyBird/
 ## Why this stack
 
 - **Kotlin Multiplatform and Compose Multiplatform.** One Kotlin codebase runs on Android and iOS: the game, the screens, saves, sync and networking. Each frame is drawn into a small "virtual pixel" image, about 216 px wide, then scaled up by a whole number, so pixels stay sharp on every screen. Only file, HTTP, network-status and sound hooks are written per platform. See [docs/IOS.md](docs/IOS.md).
-- **Node 22 with no dependencies.** SQLite, password hashing and HTTP are all built in, so nothing needs native compiling and there's no third-party supply chain to audit. SQLite runs in WAL mode, and synchronous transactions make trades and reward claims atomic.
+- **Node 22 with one dependency:** `@libsql/client`. It talks to a local SQLite file in development or a hosted Turso database in production, with the same SQL either way. Password hashing and HTTP are built into Node. Write transactions are serialized in-process, which keeps trades and reward claims atomic.
 - **One generator for the shared data.** The client and server load the same item catalog, levels and drop rates, so they can't disagree.
 
 ## Quick start (development)
@@ -64,6 +64,10 @@ cp keystore.properties.example keystore.properties   # fill in your keystore (se
 The build refuses a release URL that isn't `https://`. No server address or secret is hardcoded in the source.
 
 ## Deployment (backend)
+
+**Free hosting:** Render (server) + Turso (database), with a one-click Blueprint in `render.yaml`. Step-by-step: [docs/DEPLOY_FREE.md](docs/DEPLOY_FREE.md).
+
+**Your own server:**
 
 1. Use any small Linux VM with Node 22+. Copy `backend/` there and create `.env` with `NODE_ENV=production`, a strong `SERVER_SECRET`, `HOST=127.0.0.1`, and `TRUST_PROXY=1`.
 2. Run it as a service, for example with systemd:

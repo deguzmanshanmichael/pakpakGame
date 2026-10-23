@@ -1,0 +1,29 @@
+# Render Blueprint: free web service for the PakPak backend.
+# Data lives in Turso (free hosted SQLite), because Render's free disk is wiped on every restart.
+# Setup steps: docs/DEPLOY_FREE.md
+services:
+  - type: web
+    name: pakpak-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SERVER_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_AUTH_TOKEN
+        sync: false

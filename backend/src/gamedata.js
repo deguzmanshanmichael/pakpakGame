@@ -15,35 +15,40 @@ export class GameData {
     this.defaults = readJson('config.json');
     this.levelsFile = readJson('levels.json');
     this.levels = new Map(this.levelsFile.levels.map((l) => [l.id, l]));
-    this.seedCatalog(readJson('catalog.json'));
-    this.reload();
+  }
+
+  /** Loads the shared data files and the live config/catalog from the database. */
+  static async create(db) {
+    const data = new GameData(db);
+    await data.seedCatalog(readJson('catalog.json'));
+    await data.reload();
+    return data;
   }
 
   // Inserts catalog items that are missing. Existing rows are left alone so admin edits survive restarts.
-  seedCatalog(catalog) {
+  async seedCatalog(catalog) {
     const now = Date.now();
-    this.db.tx(() => {
-      for (const it of catalog.items) {
-        this.db.run(`INSERT OR IGNORE INTO collectibles (id, name, rarity, shape, palette, pattern, description, acquisition,
-                       tradeable, in_drop_pool, max_supply, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
-          it.id, it.name, it.rarity, it.shape, JSON.stringify(it.palette), it.pattern, it.description,
-          JSON.stringify(it.acquisition), it.tradeable ? 1 : 0, it.inDropPool ? 1 : 0, it.maxSupply ?? null, now);
-      }
-    });
+    // One batched round trip instead of 133 (matters with a remote database).
+    await this.db.client.batch(catalog.items.map((it) => ({
+      sql: `INSERT OR IGNORE INTO collectibles (id, name, rarity, shape, palette, pattern, description, acquisition,
+              tradeable, in_drop_pool, max_supply, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+      args: [it.id, it.name, it.rarity, it.shape, JSON.stringify(it.palette), it.pattern, it.description,
+        JSON.stringify(it.acquisition), it.tradeable ? 1 : 0, it.inDropPool ? 1 : 0, it.maxSupply ?? null, now],
+    })), 'write');
     this.rarities = catalog.rarities;
   }
 
-  reload() {
+  async reload() {
     const cfg = structuredClone(this.defaults);
-    for (const row of this.db.all('SELECT key, value FROM game_config')) {
+    for (const row of await this.db.all('SELECT key, value FROM game_config')) {
       if (EDITABLE_SECTIONS.includes(row.key)) cfg[row.key] = JSON.parse(row.value);
     }
     this.cfg = cfg;
-    this.loadCatalog();
+    await this.loadCatalog();
   }
 
-  loadCatalog() {
-    const rows = this.db.all('SELECT * FROM collectibles ORDER BY id');
+  async loadCatalog() {
+    const rows = await this.db.all('SELECT * FROM collectibles ORDER BY id');
     this.items = new Map(rows.map((r) => [r.id, r]));
     this.catalogVersion = rows.reduce((m, r) => Math.max(m, r.updated_at), 0);
     this.pool = new Map();
@@ -77,15 +82,15 @@ export class GameData {
     return { drops, economy, medals, notice, skins, achievements, wish, megabirds, antiCheat: { minMsPerPipe: antiCheat.minMsPerPipe }, catalogVersion: this.catalogVersion };
   }
 
-  setSection(key, value, actorId) {
-    this.db.run(`INSERT INTO game_config (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?)
+  async setSection(key, value, actorId) {
+    await this.db.run(`INSERT INTO game_config (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?)
                  ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
       key, JSON.stringify(value), Date.now(), actorId);
-    this.reload();
+    await this.reload();
   }
 
-  resetSection(key) {
-    this.db.run('DELETE FROM game_config WHERE key = ?', key);
-    this.reload();
+  async resetSection(key) {
+    await this.db.run('DELETE FROM game_config WHERE key = ?', key);
+    await this.reload();
   }
 }

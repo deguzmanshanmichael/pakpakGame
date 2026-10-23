@@ -70,7 +70,7 @@ const setCoins = (id, n) => ctx.app.db.run('UPDATE profiles SET coins = ? WHERE 
 
 test('tokens cost 150 coins and purchases are idempotent', async () => {
   const u = await ctx.register();
-  setCoins(u.id, 1000);
+  await setCoins(u.id, 1000);
   const buyId = randomUUID();
   const r1 = await ctx.call('POST', '/api/wish/buy-tokens', { count: 2, clientBuyId: buyId }, u.token);
   assert.equal(r1.status, 200);
@@ -85,7 +85,7 @@ test('tokens cost 150 coins and purchases are idempotent', async () => {
 
 test('pulls spend tokens, grant prizes, track pity, and retries return the same results', async () => {
   const u = await ctx.register();
-  setCoins(u.id, 150 * 30);
+  await setCoins(u.id, 150 * 30);
   await ctx.call('POST', '/api/wish/buy-tokens', { count: 30, clientBuyId: randomUUID() }, u.token);
   const wishId = randomUUID();
   const r = await ctx.call('POST', '/api/wish/pull', { count: 10, clientWishId: wishId }, u.token);
@@ -105,7 +105,7 @@ test('pulls spend tokens, grant prizes, track pity, and retries return the same 
 
 test('hard pity: the 200th pull without a 5-star is always a megabird', async () => {
   const u = await ctx.register();
-  ctx.app.db.run('INSERT OR REPLACE INTO wish_state (user_id, tokens, pity5, pity4, guaranteed_featured, total_pulls, updated_at) VALUES (?, 1, 199, 0, 1, 199, ?)', u.id, Date.now());
+  await ctx.app.db.run('INSERT OR REPLACE INTO wish_state (user_id, tokens, pity5, pity4, guaranteed_featured, total_pulls, updated_at) VALUES (?, 1, 199, 0, 1, 199, ?)', u.id, Date.now());
   const r = await ctx.call('POST', '/api/wish/pull', { count: 1, clientWishId: randomUUID() }, u.token);
   assert.equal(r.body.results[0].tier, 5);
   assert.equal(r.body.results[0].id, W.featured, 'guaranteed featured after a lost 50/50');
@@ -118,7 +118,7 @@ test('megabird runs: owned only, Endless only, no medals/best/leaderboard, coin 
   const u = await ctx.register();
   const notOwned = await ctx.call('POST', '/api/runs/submit', { runs: [endlessRun(30, { megabird: 'pipit' })] }, u.token);
   assert.equal(notOwned.body.results[0].reason, 'megabird_not_owned');
-  ctx.app.db.run('INSERT INTO megabirds_owned (user_id, megabird_id, acquired_at) VALUES (?, ?, ?), (?, ?, ?)', u.id, 'pipit', Date.now(), u.id, 'haribon', Date.now());
+  await ctx.app.db.run('INSERT INTO megabirds_owned (user_id, megabird_id, acquired_at) VALUES (?, ?, ?), (?, ?, ?)', u.id, 'pipit', Date.now(), u.id, 'haribon', Date.now());
   const mega = await ctx.call('POST', '/api/runs/submit', { runs: [endlessRun(30, { megabird: 'pipit', coinsCollected: 10 })] }, u.token);
   const res = mega.body.results[0];
   assert.equal(res.status, 'accepted');
@@ -138,7 +138,7 @@ test('megabird runs: owned only, Endless only, no medals/best/leaderboard, coin 
 
 test('wish-exclusive skins cannot be bought; new shop skins can', async () => {
   const u = await ctx.register();
-  setCoins(u.id, 5000);
+  await setCoins(u.id, 5000);
   assert.equal((await ctx.call('POST', '/api/shop/buy-skin', { skinId: 'jeepney' }, u.token)).status, 403);
   const ok = await ctx.call('POST', '/api/shop/buy-skin', { skinId: 'kulasisi' }, u.token);
   assert.equal(ok.status, 200);
@@ -149,9 +149,9 @@ test('Rare+ wish capsules never give Common/Uncommon/Elite', async () => {
   const { openCapsule } = await import('../src/services.js');
   const u = await ctx.register();
   const rarities = new Set();
-  ctx.app.db.tx(() => {
+  await ctx.app.db.tx(async () => {
     for (let i = 0; i < 300; i++) {
-      const c = openCapsule(ctx.app.db, ctx.app.data, u.id, 0, Math.random(), Math.random(), 'test', 'rare');
+      const c = await openCapsule(ctx.app.db, ctx.app.data, u.id, 0, Math.random(), Math.random(), 'test', 'rare');
       rarities.add(c.rarity);
     }
   });

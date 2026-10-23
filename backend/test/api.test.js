@@ -40,7 +40,7 @@ test('registration validation, login, logout and recovery', async () => {
   assert.equal((await call('GET', '/api/me/state')).status, 401);
 
   // The password hash is never plaintext.
-  const row = ctx.app.db.get('SELECT password_hash FROM users WHERE username = ?', 'birdy_1');
+  const row = await ctx.app.db.get('SELECT password_hash FROM users WHERE username = ?', 'birdy_1');
   assert.match(row.password_hash, /^scrypt\$/);
   assert.ok(!row.password_hash.includes('flapflap123'));
 
@@ -80,7 +80,7 @@ test('endless run awards coins, medals, milestone items and is idempotent', asyn
   assert.equal(r2.body.results[0].duplicate, true);
   assert.equal(r2.body.state.profile.coins, coinsAfter);
   assert.equal(r2.body.state.stats.totalRuns, 1);
-  const copies = ctx.app.db.get('SELECT COUNT(*) AS n FROM item_copies WHERE owner_id = ?', u.id).n;
+  const copies = (await ctx.app.db.get('SELECT COUNT(*) AS n FROM item_copies WHERE owner_id = ?', u.id)).n;
   assert.equal(copies, 5);
 
   // Milestone items are only granted once even after another silver run.
@@ -103,7 +103,7 @@ test('ticketed runs are verified and count for the leaderboard', async () => {
   assert.equal(long.body.results[0].reason, 'duration_exceeds_ticket');
   // Fake clock: backdate a ticket so a 20s run is plausible.
   const t3 = await ctx.call('POST', '/api/runs/start', { mode: 'endless' }, u.token);
-  ctx.app.db.run('UPDATE run_tickets SET issued_at = ? WHERE id = ?', Date.now() - 30_000, t3.body.ticketId);
+  await ctx.app.db.run('UPDATE run_tickets SET issued_at = ? WHERE id = ?', Date.now() - 30_000, t3.body.ticketId);
   const ok = await ctx.call('POST', '/api/runs/submit', { runs: [endlessRun(12, { ticketId: t3.body.ticketId, durationMs: 20_000 })] }, u.token);
   assert.equal(ok.body.results[0].verified, true);
   assert.equal(ok.body.state.stats.bestScoreVerified, 12);
@@ -123,7 +123,7 @@ test('daily capsule and coin caps stop farming', async () => {
   const opened = res.body.results.reduce((s, r) => s + r.items.filter((i) => i.reason === 'capsule').length, 0);
   assert.equal(opened, cap);
   assert.ok(res.body.results.some((r) => r.notes.includes('daily_capsule_cap')));
-  const totalRunCoins = ctx.app.db.get("SELECT SUM(delta) AS s FROM currency_ledger WHERE user_id = ? AND reason = 'run'", u.id).s;
+  const totalRunCoins = (await ctx.app.db.get("SELECT SUM(delta) AS s FROM currency_ledger WHERE user_id = ? AND reason = 'run'", u.id)).s;
   const overflow = (12 * 3 - cap) * ctx.app.data.cfg.economy.overflowCapsuleCoins;
   assert.ok(totalRunCoins <= ctx.app.data.cfg.economy.dailyEndlessCoinCap + overflow);
 });
@@ -165,7 +165,7 @@ test('mastering a boss level grants its account-bound mastery collectible', asyn
   }));
   for (const run of runs) await ctx.call('POST', '/api/runs/submit', { runs: [run] }, u.token);
   const boss = levels[4];
-  const copy = ctx.app.db.get('SELECT * FROM item_copies WHERE owner_id = ? AND collectible_id = ?', u.id, boss.masteryItem);
+  const copy = await ctx.app.db.get('SELECT * FROM item_copies WHERE owner_id = ? AND collectible_id = ?', u.id, boss.masteryItem);
   assert.ok(copy, 'mastery item issued');
   assert.equal(copy.bound, 1);
   const state = await ctx.call('GET', '/api/me/state', null, u.token);
@@ -254,7 +254,7 @@ test('trades require both confirmations and move ownership atomically', async ()
   assert.equal(b1.body.status, 'open', 'one confirmation is not enough');
   const a1 = await call('POST', `/api/trades/${t1.id}/confirm`, {}, a.token);
   assert.equal(a1.body.status, 'completed');
-  const ownerX = app.db.get('SELECT owner_id FROM item_copies WHERE collectible_id = ? AND owner_id IN (?, ?)', x, a.id, b.id).owner_id;
+  const ownerX = (await app.db.get('SELECT owner_id FROM item_copies WHERE collectible_id = ? AND owner_id IN (?, ?)', x, a.id, b.id)).owner_id;
   assert.equal(ownerX, b.id);
 
   // The second trade can no longer execute: no duplication.
@@ -262,7 +262,7 @@ test('trades require both confirmations and move ownership atomically', async ()
   const a2 = await call('POST', `/api/trades/${t2.id}/confirm`, {}, a.token);
   assert.equal(a2.body.status, 'failed');
   assert.match(a2.body.failReason, /no longer has/);
-  const xCopies = app.db.all('SELECT owner_id FROM item_copies WHERE collectible_id = ? AND owner_id IN (?, ?, ?)', x, a.id, b.id, c.id);
+  const xCopies = await app.db.all('SELECT owner_id FROM item_copies WHERE collectible_id = ? AND owner_id IN (?, ?, ?)', x, a.id, b.id, c.id);
   assert.deepEqual(xCopies.map((r) => r.owner_id), [b.id]);
 
   // Cancel before confirmation, and history.
@@ -299,7 +299,7 @@ test('redemption needs a fully verified collection; admin reviews with reasons',
   // Players cannot use admin endpoints.
   assert.equal((await call('GET', '/api/admin/redemptions', null, u.token)).status, 403);
   const admin = await ctx.register();
-  app.db.run("UPDATE users SET role = 'admin' WHERE id = ?", admin.id);
+  await app.db.run("UPDATE users SET role = 'admin' WHERE id = ?", admin.id);
   const list = await call('GET', '/api/admin/redemptions', null, admin.token);
   assert.equal(list.body.redemptions[0].id, claim.body.id);
   assert.equal((await call('POST', `/api/admin/redemptions/${claim.body.id}/decision`, { status: 'fulfilled', reason: 'skip' }, admin.token)).body.error, 'invalid_transition');
@@ -314,7 +314,7 @@ test('redemption needs a fully verified collection; admin reviews with reasons',
 test('admin can tune drop rates and the notice; invalid configs are rejected', async () => {
   const { call, app } = ctx;
   const admin = await ctx.register();
-  app.db.run("UPDATE users SET role = 'admin' WHERE id = ?", admin.id);
+  await app.db.run("UPDATE users SET role = 'admin' WHERE id = ?", admin.id);
   const drops = structuredClone(app.data.cfg.drops);
   drops.weights.celestial = 1;
   assert.equal((await call('PUT', '/api/admin/config/drops', { value: drops }, admin.token)).status, 200);
@@ -333,7 +333,7 @@ test('admin can tune drop rates and the notice; invalid configs are rejected', a
   assert.equal(patch.status, 200);
   const p1 = await ctx.register();
   await giveItems(app, p1.id, celestial.id, 3);
-  const n = app.db.get('SELECT COUNT(*) AS n FROM item_copies WHERE collectible_id = ? AND owner_id = ?', celestial.id, p1.id).n;
+  const n = (await app.db.get('SELECT COUNT(*) AS n FROM item_copies WHERE collectible_id = ? AND owner_id = ?', celestial.id, p1.id)).n;
   assert.equal(n, 1);
 });
 

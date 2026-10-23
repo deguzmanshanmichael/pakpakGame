@@ -137,3 +137,15 @@ export const v = {
     return n;
   },
 };
+
+/** Sequential async map/filter (sequential keeps statements in order inside a transaction). */
+export async function mapSeq(arr, fn) {
+  const out = [];
+  for (let i = 0; i < arr.length; i++) out.push(await fn(arr[i], i));
+  return out;
+}
+export async function filterSeq(arr, fn) {
+  const out = [];
+  for (let i = 0; i < arr.length; i++) if (await fn(arr[i], i)) out.push(arr[i]);
+  return out;
+}

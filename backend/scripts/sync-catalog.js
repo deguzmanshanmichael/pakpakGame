@@ -5,7 +5,7 @@ import { openDb } from '../src/db.js';
 import { GameData } from '../src/gamedata.js';
 
 const env = loadEnv();
-const db = openDb(env.dbPath);
-const data = new GameData(db);
+const db = await openDb(env.dbPath, env.dbAuthToken);
+const data = await GameData.create(db);
 console.log(`Catalog has ${data.items.size} collectibles in ${env.dbPath}`);
 db.close();

@@ -53,32 +53,32 @@ export function newPlayerCode() {
   return `PK-${s}`;
 }
 
-export function createSession(db, userId, days) {
+export async function createSession(db, userId, days) {
   const token = newToken();
   const now = Date.now();
-  db.run('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
+  await db.run('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
     sha256(token), userId, now, now + days * 86400_000);
   // Keep at most 10 sessions per user.
-  db.run(`DELETE FROM sessions WHERE user_id = ? AND token_hash NOT IN
+  await db.run(`DELETE FROM sessions WHERE user_id = ? AND token_hash NOT IN
           (SELECT token_hash FROM sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 10)`, userId, userId);
   return token;
 }
 
-export function authenticate(db, header) {
+export async function authenticate(db, header) {
   if (!header || !header.startsWith('Bearer ')) return null;
   const token = header.slice(7).trim();
   if (token.length < 20 || token.length > 100) return null;
   const hash = sha256(token);
-  const row = db.get(`SELECT s.token_hash, s.expires_at, u.id, u.username, u.player_code, u.role, u.status, u.last_seen_at, u.created_at
+  const row = await db.get(`SELECT s.token_hash, s.expires_at, u.id, u.username, u.player_code, u.role, u.status, u.last_seen_at, u.created_at
                       FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ?`, hash);
   if (!row) return null;
   const now = Date.now();
   if (row.expires_at < now) {
-    db.run('DELETE FROM sessions WHERE token_hash = ?', hash);
+    await db.run('DELETE FROM sessions WHERE token_hash = ?', hash);
     return null;
   }
   if (row.status !== 'active') throw new HttpError(403, 'account_suspended', 'This account is suspended. Contact the developer.');
-  if (!row.last_seen_at || now - row.last_seen_at > 30_000) db.run('UPDATE users SET last_seen_at = ? WHERE id = ?', now, row.id);
+  if (!row.last_seen_at || now - row.last_seen_at > 30_000) await db.run('UPDATE users SET last_seen_at = ? WHERE id = ?', now, row.id);
   return { id: row.id, username: row.username, playerCode: row.player_code, role: row.role, createdAt: row.created_at, tokenHash: hash };
 }
 
